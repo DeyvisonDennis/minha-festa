@@ -1,0 +1,587 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model assinaturas_fornecedor {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fornecedor_id         String                  @unique(map: "uq_assinatura_ativa_fornecedor", where: raw("(status = ANY (ARRAY['ATIVA'::status_assinatura, 'PENDENTE'::status_assinatura]))")) @db.Uuid
+  valor_mensal          Decimal                 @default(5.00) @db.Decimal(10, 2)
+  status                status_assinatura       @default(PENDENTE)
+  inicio_em             DateTime?               @db.Date
+  fim_em                DateTime?               @db.Date
+  proxima_cobranca      DateTime?               @db.Date
+  cancelada_em          DateTime?               @db.Timestamptz(6)
+  gateway               String?                 @db.VarChar(50)
+  gateway_assinatura_id String?                 @db.VarChar(150)
+  criado_em             DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  fornecedores          fornecedores            @relation(fields: [fornecedor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pagamentos_fornecedor pagamentos_fornecedor[]
+
+  @@index([fornecedor_id], map: "idx_assinaturas_fornecedor")
+  @@index([status], map: "idx_assinaturas_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model avaliacoes_fornecedores {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fornecedor_id  String       @db.Uuid
+  evento_id      String       @db.Uuid
+  organizador_id String       @db.Uuid
+  nota           Int
+  comentario     String?
+  criado_em      DateTime     @default(now()) @db.Timestamptz(6)
+  eventos        eventos      @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fornecedores   fornecedores @relation(fields: [fornecedor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  usuarios       usuarios     @relation(fields: [organizador_id], references: [id], onUpdate: NoAction)
+
+  @@unique([evento_id, fornecedor_id], map: "uq_avaliacao_evento_fornecedor")
+  @@index([fornecedor_id], map: "idx_avaliacoes_fornecedor")
+}
+
+model blocos_site_evento {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  site_id      String       @db.Uuid
+  tipo_bloco   String       @db.VarChar(50)
+  titulo       String?      @db.VarChar(180)
+  conteudo     Json         @default("{}")
+  ordem        Int          @default(0)
+  visivel      Boolean      @default(true)
+  criado_em    DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime     @default(now()) @db.Timestamptz(6)
+  sites_evento sites_evento @relation(fields: [site_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([site_id, ordem], map: "idx_blocos_site")
+}
+
+model categorias_fornecedores {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome                  String                  @unique @db.VarChar(100)
+  descricao             String?
+  ativa                 Boolean                 @default(true)
+  criado_em             DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  fornecedores          fornecedores[]
+  orcamentos            orcamentos[]
+  orcamentos_categorias orcamentos_categorias[]
+}
+
+model consentimentos_lgpd {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id       String             @db.Uuid
+  tipo             tipo_consentimento
+  versao_documento String             @db.VarChar(30)
+  aceito           Boolean
+  ip_origem        String?            @db.Inet
+  aceito_em        DateTime           @default(now()) @db.Timestamptz(6)
+  usuarios         usuarios           @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([usuario_id], map: "idx_consentimentos_usuario")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model contribuicoes_presentes {
+  id                   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  presente_id          String              @db.Uuid
+  nome_contribuinte    String?             @db.VarChar(150)
+  email_contribuinte   String?             @db.Citext
+  valor                Decimal             @db.Decimal(12, 2)
+  status               status_contribuicao @default(PENDENTE)
+  gateway              String?             @db.VarChar(50)
+  gateway_pagamento_id String?             @db.VarChar(150)
+  pago_em              DateTime?           @db.Timestamptz(6)
+  criado_em            DateTime            @default(now()) @db.Timestamptz(6)
+  presentes            presentes           @relation(fields: [presente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([presente_id], map: "idx_contribuicoes_presente")
+  @@index([status], map: "idx_contribuicoes_status")
+}
+
+model convidados {
+  id                 String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id          String      @db.Uuid
+  nome               String      @db.VarChar(150)
+  telefone           String?     @db.VarChar(20)
+  email              String?     @db.Citext
+  grupo              String?     @db.VarChar(100)
+  observacao         String?
+  qr_code_token      String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status_rsvp        status_rsvp @default(PENDENTE)
+  respondeu_em       DateTime?   @db.Timestamptz(6)
+  check_in           Boolean     @default(false)
+  check_in_em        DateTime?   @db.Timestamptz(6)
+  convite_enviado_em DateTime?   @db.Timestamptz(6)
+  criado_em          DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime    @default(now()) @db.Timestamptz(6)
+  eventos            eventos     @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([evento_id, email], map: "uq_convidado_email_evento", where: raw("(email IS NOT NULL)"))
+  @@index([evento_id], map: "idx_convidados_evento")
+  @@index([status_rsvp], map: "idx_convidados_rsvp")
+}
+
+model convites {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id    String   @db.Uuid
+  nome         String   @db.VarChar(150)
+  template     String   @db.VarChar(100)
+  json_layout  Json     @default("{}")
+  cores        Json     @default("{}")
+  fontes       Json     @default("{}")
+  fotos        Json     @default("[]")
+  pdf_url      String?
+  png_url      String?
+  link_publico String?  @unique
+  publicado    Boolean  @default(false)
+  criado_em    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @db.Timestamptz(6)
+  eventos      eventos  @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([evento_id], map: "idx_convites_evento")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model eventos {
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizador_id          String                    @db.Uuid
+  nome_evento             String                    @db.VarChar(180)
+  tipo_evento             String?                   @db.VarChar(100)
+  data_evento             DateTime                  @db.Date
+  hora_evento             DateTime?                 @db.Time(6)
+  local                   String?                   @db.VarChar(255)
+  endereco                String?
+  cidade                  String?                   @db.VarChar(100)
+  estado                  String?                   @db.Char(2)
+  descricao               String?
+  historia                String?
+  imagem_capa_url         String?
+  orcamento_total         Decimal                   @default(0) @db.Decimal(12, 2)
+  publico                 Boolean                   @default(false)
+  criado_em               DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  avaliacoes_fornecedores avaliacoes_fornecedores[]
+  convidados              convidados[]
+  convites                convites[]
+  usuarios                usuarios                  @relation(fields: [organizador_id], references: [id], onUpdate: NoAction)
+  orcamentos              orcamentos[]
+  orcamentos_categorias   orcamentos_categorias[]
+  pix_configuracoes       pix_configuracoes?
+  presentes               presentes[]
+  save_the_date           save_the_date[]
+  sites_evento            sites_evento?
+  tarefas                 tarefas[]
+
+  @@index([data_evento], map: "idx_eventos_data")
+  @@index([organizador_id], map: "idx_eventos_organizador")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model fornecedores {
+  id                                           String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id                                   String                    @unique @db.Uuid
+  categoria_id                                 String                    @db.Uuid
+  nome_empresa                                 String                    @db.VarChar(180)
+  cnpj                                         String                    @unique @db.VarChar(14)
+  descricao                                    String?
+  telefone                                     String?                   @db.VarChar(20)
+  email                                        String?                   @db.Citext
+  site                                         String?                   @db.VarChar(255)
+  instagram                                    String?                   @db.VarChar(150)
+  facebook                                     String?                   @db.VarChar(150)
+  cidade                                       String                    @db.VarChar(100)
+  estado                                       String                    @db.Char(2)
+  endereco                                     String?
+  status                                       status_fornecedor         @default(PENDENTE)
+  perfil_validado                              Boolean                   @default(false)
+  validado_por                                 String?                   @db.Uuid
+  validado_em                                  DateTime?                 @db.Timestamptz(6)
+  bloqueado_em                                 DateTime?                 @db.Timestamptz(6)
+  motivo_bloqueio                              String?
+  avaliacao_media                              Decimal                   @default(0) @db.Decimal(3, 2)
+  quantidade_avaliacoes                        Int                       @default(0)
+  criado_em                                    DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                                   DateTime                  @default(now()) @db.Timestamptz(6)
+  assinaturas_fornecedor                       assinaturas_fornecedor?
+  avaliacoes_fornecedores                      avaliacoes_fornecedores[]
+  categorias_fornecedores                      categorias_fornecedores   @relation(fields: [categoria_id], references: [id], onUpdate: NoAction)
+  usuarios_fornecedores_usuario_idTousuarios   usuarios                  @relation("fornecedores_usuario_idTousuarios", fields: [usuario_id], references: [id], onUpdate: NoAction)
+  usuarios_fornecedores_validado_porTousuarios usuarios?                 @relation("fornecedores_validado_porTousuarios", fields: [validado_por], references: [id], onUpdate: NoAction)
+  orcamentos                                   orcamentos[]
+  pagamentos_fornecedor                        pagamentos_fornecedor[]
+  portfolio_fornecedor                         portfolio_fornecedor[]
+
+  @@index([avaliacao_media(sort: Desc)], map: "idx_fornecedores_avaliacao")
+  @@index([categoria_id], map: "idx_fornecedores_categoria")
+  @@index([cidade, estado], map: "idx_fornecedores_localizacao")
+  @@index([status], map: "idx_fornecedores_status")
+}
+
+model logs_auditoria {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id       String?   @db.Uuid
+  acao             String    @db.VarChar(100)
+  tabela_afetada   String?   @db.VarChar(100)
+  registro_id      String?   @db.Uuid
+  dados_anteriores Json?
+  dados_novos      Json?
+  ip_origem        String?   @db.Inet
+  user_agent       String?
+  criado_em        DateTime  @default(now()) @db.Timestamptz(6)
+  usuarios         usuarios? @relation(fields: [usuario_id], references: [id], onUpdate: NoAction)
+
+  @@index([criado_em], map: "idx_logs_data")
+  @@index([tabela_afetada, registro_id], map: "idx_logs_tabela_registro")
+  @@index([usuario_id], map: "idx_logs_usuario")
+}
+
+model notificacoes {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id String    @db.Uuid
+  titulo     String    @db.VarChar(180)
+  mensagem   String
+  tipo       String?   @db.VarChar(80)
+  lida       Boolean   @default(false)
+  lida_em    DateTime? @db.Timestamptz(6)
+  criado_em  DateTime  @default(now()) @db.Timestamptz(6)
+  usuarios   usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([usuario_id, lida], map: "idx_notificacoes_usuario")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model orcamentos {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id               String                   @db.Uuid
+  fornecedor_id           String?                  @db.Uuid
+  categoria_id            String?                  @db.Uuid
+  categoria_nome          String?                  @db.VarChar(120)
+  valor                   Decimal                  @db.Decimal(12, 2)
+  observacao              String?
+  validade                DateTime?                @db.Date
+  status                  status_orcamento         @default(SOLICITADO)
+  contratado              Boolean                  @default(false)
+  data_contratacao        DateTime?                @db.Date
+  criado_em               DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                 @default(now()) @db.Timestamptz(6)
+  categorias_fornecedores categorias_fornecedores? @relation(fields: [categoria_id], references: [id], onUpdate: NoAction)
+  eventos                 eventos                  @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fornecedores            fornecedores?            @relation(fields: [fornecedor_id], references: [id], onUpdate: NoAction)
+
+  @@index([evento_id], map: "idx_orcamentos_evento")
+  @@index([fornecedor_id], map: "idx_orcamentos_fornecedor")
+  @@index([status], map: "idx_orcamentos_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model orcamentos_categorias {
+  id                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id               String                   @db.Uuid
+  categoria_id            String?                  @db.Uuid
+  nome_categoria          String                   @db.VarChar(120)
+  valor_planejado         Decimal                  @default(0) @db.Decimal(12, 2)
+  criado_em               DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                 @default(now()) @db.Timestamptz(6)
+  categorias_fornecedores categorias_fornecedores? @relation(fields: [categoria_id], references: [id], onUpdate: NoAction)
+  eventos                 eventos                  @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([evento_id, nome_categoria], map: "uq_evento_categoria_orcamento")
+  @@index([evento_id], map: "idx_orcamentos_categorias_evento")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model pagamentos_fornecedor {
+  id                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fornecedor_id          String                  @db.Uuid
+  assinatura_id          String?                 @db.Uuid
+  valor                  Decimal                 @db.Decimal(10, 2)
+  vencimento             DateTime                @db.Date
+  pago_em                DateTime?               @db.Timestamptz(6)
+  status                 status_pagamento        @default(PENDENTE)
+  gateway                String?                 @db.VarChar(50)
+  gateway_pagamento_id   String?                 @db.VarChar(150)
+  comprovante_url        String?
+  criado_em              DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                @default(now()) @db.Timestamptz(6)
+  assinaturas_fornecedor assinaturas_fornecedor? @relation(fields: [assinatura_id], references: [id], onUpdate: NoAction)
+  fornecedores           fornecedores            @relation(fields: [fornecedor_id], references: [id], onUpdate: NoAction)
+
+  @@index([fornecedor_id], map: "idx_pagamentos_fornecedor")
+  @@index([status], map: "idx_pagamentos_status")
+}
+
+model pix_configuracoes {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id  String   @unique @db.Uuid
+  chave_pix  String   @db.VarChar(255)
+  banco      String?  @db.VarChar(120)
+  favorecido String   @db.VarChar(150)
+  criado_em  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  eventos    eventos  @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model portfolio_fornecedor {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fornecedor_id String       @db.Uuid
+  imagem_url    String
+  titulo        String?      @db.VarChar(150)
+  descricao     String?
+  ordem         Int          @default(0)
+  destaque      Boolean      @default(false)
+  criado_em     DateTime     @default(now()) @db.Timestamptz(6)
+  fornecedores  fornecedores @relation(fields: [fornecedor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([fornecedor_id], map: "idx_portfolio_fornecedor")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model presentes {
+  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id               String                    @db.Uuid
+  nome                    String                    @db.VarChar(180)
+  descricao               String?
+  imagem_url              String?
+  valor                   Decimal                   @default(0) @db.Decimal(12, 2)
+  link_compra             String?
+  tipo                    tipo_presente
+  quantidade              Int                       @default(1)
+  recebido                Boolean                   @default(false)
+  criado_em               DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  contribuicoes_presentes contribuicoes_presentes[]
+  eventos                 eventos                   @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([evento_id], map: "idx_presentes_evento")
+}
+
+model save_the_date {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id    String   @db.Uuid
+  nome         String   @db.VarChar(150)
+  template     String   @db.VarChar(100)
+  json_layout  Json     @default("{}")
+  imagem_url   String?
+  pdf_url      String?
+  link_publico String?  @unique
+  publicado    Boolean  @default(false)
+  criado_em    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @db.Timestamptz(6)
+  eventos      eventos  @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([evento_id], map: "idx_save_the_date_evento")
+}
+
+model sessoes_usuario {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id         String    @db.Uuid
+  refresh_token_hash String    @unique @db.VarChar(255)
+  ip_origem          String?   @db.Inet
+  user_agent         String?
+  expira_em          DateTime  @db.Timestamptz(6)
+  revogada_em        DateTime? @db.Timestamptz(6)
+  criado_em          DateTime  @default(now()) @db.Timestamptz(6)
+  usuarios           usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model sites_evento {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id          String               @unique @db.Uuid
+  slug               String               @unique @db.VarChar(180)
+  tema               String?              @db.VarChar(100)
+  titulo             String?              @db.VarChar(180)
+  descricao          String?
+  publicado          Boolean              @default(false)
+  criado_em          DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
+  blocos_site_evento blocos_site_evento[]
+  eventos            eventos              @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([slug], map: "idx_sites_evento_slug")
+}
+
+model solicitacoes_lgpd {
+  id                                                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id                                        String                  @db.Uuid
+  tipo                                              tipo_solicitacao_lgpd
+  status                                            status_solicitacao_lgpd @default(ABERTA)
+  descricao                                         String?
+  resposta                                          String?
+  atendido_por                                      String?                 @db.Uuid
+  atendida_em                                       DateTime?               @db.Timestamptz(6)
+  criado_em                                         DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                                        DateTime                @default(now()) @db.Timestamptz(6)
+  usuarios_solicitacoes_lgpd_atendido_porTousuarios usuarios?               @relation("solicitacoes_lgpd_atendido_porTousuarios", fields: [atendido_por], references: [id], onUpdate: NoAction)
+  usuarios_solicitacoes_lgpd_usuario_idTousuarios   usuarios                @relation("solicitacoes_lgpd_usuario_idTousuarios", fields: [usuario_id], references: [id], onUpdate: NoAction)
+
+  @@index([status], map: "idx_solicitacoes_lgpd_status")
+  @@index([usuario_id], map: "idx_solicitacoes_lgpd_usuario")
+}
+
+model tarefas {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  evento_id      String        @db.Uuid
+  titulo         String        @db.VarChar(180)
+  descricao      String?
+  responsavel_id String?       @db.Uuid
+  prazo          DateTime?     @db.Date
+  hora_prazo     DateTime?     @db.Time(6)
+  status         status_tarefa @default(PENDENTE)
+  prioridade     Int           @default(0)
+  concluida_em   DateTime?     @db.Timestamptz(6)
+  criado_em      DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime      @default(now()) @db.Timestamptz(6)
+  eventos        eventos       @relation(fields: [evento_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  usuarios       usuarios?     @relation(fields: [responsavel_id], references: [id], onUpdate: NoAction)
+
+  @@index([evento_id], map: "idx_tarefas_evento")
+  @@index([prazo], map: "idx_tarefas_prazo")
+  @@index([status], map: "idx_tarefas_status")
+}
+
+model tokens_confirmacao_email {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id   String    @db.Uuid
+  token_hash   String    @unique @db.VarChar(255)
+  expira_em    DateTime  @db.Timestamptz(6)
+  utilizado_em DateTime? @db.Timestamptz(6)
+  criado_em    DateTime  @default(now()) @db.Timestamptz(6)
+  usuarios     usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([usuario_id], map: "idx_tokens_email_usuario")
+}
+
+model tokens_recuperacao_senha {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuario_id   String    @db.Uuid
+  token_hash   String    @unique @db.VarChar(255)
+  expira_em    DateTime  @db.Timestamptz(6)
+  utilizado_em DateTime? @db.Timestamptz(6)
+  criado_em    DateTime  @default(now()) @db.Timestamptz(6)
+  usuarios     usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model usuarios {
+  id                                                         String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome                                                       String                     @db.VarChar(150)
+  cpf                                                        String?                    @unique @db.VarChar(11)
+  email                                                      String                     @unique @db.Citext
+  senha_hash                                                 String                     @db.VarChar(255)
+  telefone                                                   String?                    @db.VarChar(20)
+  perfil                                                     perfil_usuario             @default(ORGANIZADOR)
+  email_confirmado                                           Boolean                    @default(false)
+  ativo                                                      Boolean                    @default(true)
+  consentimento_lgpd                                         Boolean                    @default(false)
+  data_consentimento_lgpd                                    DateTime?                  @db.Timestamptz(6)
+  ultimo_login                                               DateTime?                  @db.Timestamptz(6)
+  criado_em                                                  DateTime                   @default(now()) @db.Timestamptz(6)
+  updated_at                                                 DateTime                   @default(now()) @db.Timestamptz(6)
+  excluido_em                                                DateTime?                  @db.Timestamptz(6)
+  avaliacoes_fornecedores                                    avaliacoes_fornecedores[]
+  consentimentos_lgpd                                        consentimentos_lgpd[]
+  eventos                                                    eventos[]
+  fornecedores_fornecedores_usuario_idTousuarios             fornecedores?              @relation("fornecedores_usuario_idTousuarios")
+  fornecedores_fornecedores_validado_porTousuarios           fornecedores[]             @relation("fornecedores_validado_porTousuarios")
+  logs_auditoria                                             logs_auditoria[]
+  notificacoes                                               notificacoes[]
+  sessoes_usuario                                            sessoes_usuario[]
+  solicitacoes_lgpd_solicitacoes_lgpd_atendido_porTousuarios solicitacoes_lgpd[]        @relation("solicitacoes_lgpd_atendido_porTousuarios")
+  solicitacoes_lgpd_solicitacoes_lgpd_usuario_idTousuarios   solicitacoes_lgpd[]        @relation("solicitacoes_lgpd_usuario_idTousuarios")
+  tarefas                                                    tarefas[]
+  tokens_confirmacao_email                                   tokens_confirmacao_email[]
+  tokens_recuperacao_senha                                   tokens_recuperacao_senha[]
+
+  @@index([email_confirmado], map: "idx_usuarios_email_confirmado")
+  @@index([perfil], map: "idx_usuarios_perfil")
+}
+
+enum perfil_usuario {
+  ORGANIZADOR
+  FORNECEDOR
+  ADMINISTRADOR
+}
+
+enum status_assinatura {
+  PENDENTE
+  ATIVA
+  ATRASADA
+  CANCELADA
+  EXPIRADA
+}
+
+enum status_contribuicao {
+  PENDENTE
+  PAGA
+  CANCELADA
+  ESTORNADA
+}
+
+enum status_fornecedor {
+  PENDENTE
+  APROVADO
+  BLOQUEADO
+  OCULTO
+}
+
+enum status_orcamento {
+  SOLICITADO
+  RECEBIDO
+  EM_ANALISE
+  APROVADO
+  RECUSADO
+  CANCELADO
+}
+
+enum status_pagamento {
+  PENDENTE
+  APROVADO
+  RECUSADO
+  CANCELADO
+  ESTORNADO
+}
+
+enum status_rsvp {
+  CONFIRMADO
+  NAO_CONFIRMADO
+  PENDENTE
+}
+
+enum status_solicitacao_lgpd {
+  ABERTA
+  EM_ANALISE
+  ATENDIDA
+  RECUSADA
+  CANCELADA
+}
+
+enum status_tarefa {
+  PENDENTE
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum tipo_consentimento {
+  TERMOS_DE_USO
+  POLITICA_DE_PRIVACIDADE
+  COMUNICACOES
+}
+
+enum tipo_presente {
+  PRODUTO
+  CONTRIBUICAO_PIX
+}
+
+enum tipo_solicitacao_lgpd {
+  EXCLUSAO
+  EXPORTACAO
+  CORRECAO
+  INFORMACOES
+}
