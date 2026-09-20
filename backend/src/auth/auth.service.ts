@@ -7,14 +7,18 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -150,6 +154,82 @@ export class AuthService {
       where: { refresh_token_hash, revogada_em: null },
       data: { revogada_em: new Date() },
     });
+  }
+
+    async forgotPassword(dto: ForgotPasswordDto) {
+    const usuario = await this.prisma.usuarios.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (usuario && usuario.ativo) {
+      const tokenBruto = crypto.randomBytes(32).toString('hex');
+      const token_hash = crypto
+        .createHmac('sha256', process.env.PASSWORD_RESET_SECRET!)
+        .update(tokenBruto)
+        .digest('hex');
+
+      const expiraEm = new Date();
+      expiraEm.setHours(expiraEm.getHours() + 1);
+
+      await this.prisma.tokens_recuperacao_senha.create({
+        data: {
+          usuario_id: usuario.id,
+          token_hash,
+          expira_em: expiraEm,
+        },
+      });
+
+      const link = `${process.env.FRONTEND_URL}/redefinir-senha?token=${tokenBruto}`;
+
+      await this.emailService.enviarEmailRedefinicaoSenha(
+        usuario.email,
+        usuario.nome,
+        link,
+      );
+    }
+
+    return {
+      message:
+        'Se o e-mail informado estiver cadastrado, você receberá um link de redefinição em instantes.',
+    };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const token_hash = crypto
+      .createHmac('sha256', process.env.PASSWORD_RESET_SECRET!)
+      .update(dto.token)
+      .digest('hex');
+
+    const registro = await this.prisma.tokens_recuperacao_senha.findUnique({
+      where: { token_hash },
+    });
+
+    if (
+      !registro ||
+      registro.utilizado_em ||
+      registro.expira_em < new Date()
+    ) {
+      throw new UnauthorizedException('Link de redefinição inválido ou expirado.');
+    }
+
+    const senha_hash = await bcrypt.hash(dto.novaSenha, 10);
+
+    await this.prisma.$transaction([
+      this.prisma.usuarios.update({
+        where: { id: registro.usuario_id },
+        data: { senha_hash },
+      }),
+      this.prisma.tokens_recuperacao_senha.update({
+        where: { id: registro.id },
+        data: { utilizado_em: new Date() },
+      }),
+      this.prisma.sessoes_usuario.updateMany({
+        where: { usuario_id: registro.usuario_id, revogada_em: null },
+        data: { revogada_em: new Date() },
+      }),
+    ]);
+
+    return { message: 'Senha redefinida com sucesso.' };
   }
 
   private gerarAccessToken(usuarioId: string, perfil: string): string {
