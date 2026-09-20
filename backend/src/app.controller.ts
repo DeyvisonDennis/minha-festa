@@ -1,13 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { PrismaService } from './prisma/prisma.service';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
@@ -19,15 +15,6 @@ export class AppController {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
-    };
-  }
-
-  @Get('db-test')
-  async getDbTest() {
-    const totalCategorias = await this.prisma.categorias_fornecedores.count();
-    return {
-      conexao: 'ok',
-      total_categorias_fornecedores: totalCategorias,
     };
   }
 }
