@@ -473,7 +473,7 @@ model usuarios {
   nome                                                       String                     @db.VarChar(150)
   cpf                                                        String?                    @unique @db.VarChar(11)
   email                                                      String                     @unique @db.Citext
-  senha_hash                                                 String                     @db.VarChar(255)
+  senha_hash                                                 String?                    @db.VarChar(255)
   telefone                                                   String?                    @db.VarChar(20)
   perfil                                                     perfil_usuario             @default(ORGANIZADOR)
   email_confirmado                                           Boolean                    @default(false)
@@ -484,6 +484,7 @@ model usuarios {
   criado_em                                                  DateTime                   @default(now()) @db.Timestamptz(6)
   updated_at                                                 DateTime                   @default(now()) @db.Timestamptz(6)
   excluido_em                                                DateTime?                  @db.Timestamptz(6)
+  google_id                                                  String?                    @unique @db.VarChar(255)
   avaliacoes_fornecedores                                    avaliacoes_fornecedores[]
   consentimentos_lgpd                                        consentimentos_lgpd[]
   eventos                                                    eventos[]

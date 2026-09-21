@@ -62,6 +62,13 @@ export class AuthService {
       throw new UnauthorizedException('E-mail ou senha inválidos.');
     }
 
+    if (!usuario.senha_hash) {
+      throw new UnauthorizedException({
+        errorCode: 'GOOGLE_ONLY_ACCOUNT',
+        message: 'Esta conta usa login com Google.',
+      });
+    }
+
     const senhaValida = await bcrypt.compare(dto.senha, usuario.senha_hash);
     if (!senhaValida) {
       throw new UnauthorizedException('E-mail ou senha inválidos.');
@@ -230,6 +237,56 @@ export class AuthService {
     ]);
 
     return { message: 'Senha redefinida com sucesso.' };
+  }
+
+    async loginComGoogle(
+    googleUser: { googleId: string; email: string; nome: string },
+    ipOrigem?: string,
+    userAgent?: string,
+  ) {
+    let usuario = await this.prisma.usuarios.findUnique({
+      where: { google_id: googleUser.googleId },
+    });
+
+    if (!usuario) {
+      usuario = await this.prisma.usuarios.findUnique({
+        where: { email: googleUser.email },
+      });
+
+      if (usuario) {
+        usuario = await this.prisma.usuarios.update({
+          where: { id: usuario.id },
+          data: { google_id: googleUser.googleId },
+        });
+      } else {
+        const senhaAleatoria = crypto.randomBytes(32).toString('hex');
+        const senha_hash = await bcrypt.hash(senhaAleatoria, 10);
+
+        usuario = await this.prisma.usuarios.create({
+          data: {
+            nome: googleUser.nome,
+            email: googleUser.email,
+            senha_hash,
+            google_id: googleUser.googleId,
+            email_confirmado: true,
+          },
+        });
+      }
+    }
+
+    if (!usuario.ativo) {
+      throw new UnauthorizedException('Usuário inativo.');
+    }
+
+    await this.prisma.usuarios.update({
+      where: { id: usuario.id },
+      data: { ultimo_login: new Date() },
+    });
+
+    const accessToken = this.gerarAccessToken(usuario.id, usuario.perfil);
+    const refreshToken = await this.criarSessao(usuario.id, ipOrigem, userAgent);
+
+    return { accessToken, refreshToken };
   }
 
   private gerarAccessToken(usuarioId: string, perfil: string): string {

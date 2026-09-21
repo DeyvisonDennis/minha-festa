@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 const ACCESS_TOKEN_COOKIE = 'access_token';
 const REFRESH_TOKEN_COOKIE = 'refresh_token';
@@ -78,6 +79,36 @@ export class AuthController {
   @Post('reset-password')
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleAuth() {
+    // O guard redireciona para a tela de login do Google automaticamente.
+    // Este método não precisa de corpo.
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const googleUser = req.user as {
+      googleId: string;
+      email: string;
+      nome: string;
+    };
+
+    const { accessToken, refreshToken } = await this.authService.loginComGoogle(
+      googleUser,
+      req.ip,
+      req.headers['user-agent'],
+    );
+
+    this.setAuthCookies(res, accessToken, refreshToken);
+
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
 
   @Get('me')
