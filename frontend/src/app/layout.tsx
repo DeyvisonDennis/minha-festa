@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${playfair.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-[#FAF7F2] text-[#2B1B12]">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

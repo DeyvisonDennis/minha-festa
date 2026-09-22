@@ -11,9 +11,27 @@ export class ApiError extends Error {
   }
 }
 
+let refreshEmAndamento: Promise<boolean> | null = null;
+
+function tentarRefresh(): Promise<boolean> {
+  if (!refreshEmAndamento) {
+    refreshEmAndamento = fetch(`${API_URL}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((res) => res.ok)
+      .catch(() => false)
+      .finally(() => {
+        refreshEmAndamento = null;
+      });
+  }
+  return refreshEmAndamento;
+}
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
+  podeTentarRefresh = true,
 ): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
@@ -23,6 +41,13 @@ export async function apiFetch<T>(
       ...options.headers,
     },
   });
+
+  if (res.status === 401 && podeTentarRefresh && path !== "/auth/refresh") {
+    const renovou = await tentarRefresh();
+    if (renovou) {
+      return apiFetch<T>(path, options, false);
+    }
+  }
 
   const data = await res.json().catch(() => null);
 
