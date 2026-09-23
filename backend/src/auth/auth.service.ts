@@ -188,11 +188,18 @@ export class AuthService {
 
       const link = `${process.env.FRONTEND_URL}/redefinir-senha?token=${tokenBruto}`;
 
-      await this.emailService.enviarEmailRedefinicaoSenha(
-        usuario.email,
-        usuario.nome,
-        link,
-      );
+      try {
+        await this.emailService.enviarEmailRedefinicaoSenha(
+          usuario.email,
+          usuario.nome,
+          link,
+        );
+      } catch (error) {
+        console.warn(
+          'Falha ao enviar e-mail de redefinição de senha. Verifique as variáveis EMAIL_* no .env.',
+          error,
+        );
+      }
     }
 
     return {
