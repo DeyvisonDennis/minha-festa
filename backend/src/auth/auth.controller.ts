@@ -8,6 +8,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { OptionalGoogleAuthGuard } from './guards/optional-google-auth.guard';
 
 const ACCESS_TOKEN_COOKIE = 'access_token';
 const REFRESH_TOKEN_COOKIE = 'refresh_token';
@@ -82,14 +83,14 @@ export class AuthController {
   }
 
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(OptionalGoogleAuthGuard)
   googleAuth() {
     // O guard redireciona para a tela de login do Google automaticamente.
     // Este método não precisa de corpo.
   }
 
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(OptionalGoogleAuthGuard)
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
