@@ -23,3 +23,7 @@ npm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Dumps do banco com dados reais/sensíveis — não versionar
+database/*.dump
+database/*backup*
