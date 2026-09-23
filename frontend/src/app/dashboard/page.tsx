@@ -185,9 +185,9 @@ function DashboardContent() {
           </div>
 
           <div className="mt-4 flex justify-between border-t border-border pt-4 text-xs">
-            <span className="text-green-700">Confirmados <strong className="text-foreground">{RSVP_RESUMO_MOCK.confirmados}</strong></span>
-            <span className="text-amber-600">Aguardando <strong className="text-foreground">{RSVP_RESUMO_MOCK.aguardando}</strong></span>
-            <span className="text-red-600">Recusados <strong className="text-foreground">{RSVP_RESUMO_MOCK.recusados}</strong></span>
+            <span className="text-green-700">Confirmados: <strong className="text-foreground">{RSVP_RESUMO_MOCK.confirmados}</strong></span>
+            <span className="text-amber-600">Aguardando: <strong className="text-foreground">{RSVP_RESUMO_MOCK.aguardando}</strong></span>
+            <span className="text-red-600">Recusados: <strong className="text-foreground">{RSVP_RESUMO_MOCK.recusados}</strong></span>
           </div>
         </div>
       </div>
