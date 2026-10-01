@@ -4,12 +4,11 @@ import { useMemo, useState } from "react";
 import { Mail, Plus, Search, Check, Copy } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import {
-  CONVIDADOS_MOCK,
   RSVP_CONFIG,
   LINK_RSVP_MOCK,
-  type Convidado,
   type StatusRsvp,
 } from "@/lib/mock-convidados";
+import { useConvidados } from "@/hooks/useConvidados";
 import { AdicionarConvidadoModal } from "@/components/convidados/AdicionarConvidadoModal";
 import { EnviarEmailModal } from "@/components/convidados/EnviarEmailModal";
 
@@ -23,7 +22,7 @@ const FILTROS: { id: Filtro; label: string }[] = [
 ];
 
 function ConvidadosContent() {
-  const [convidados, setConvidados] = useState<Convidado[]>(CONVIDADOS_MOCK);
+  const { convidados, adicionarConvidado, marcarEmailsComoEnviados } = useConvidados();
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("TODOS");
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
@@ -50,7 +49,7 @@ function ConvidadosContent() {
     });
   }, [convidados, busca, filtro]);
 
-  const pendentesDeEmail = convidados.filter((c) => c.emailEnviadoEm === null);
+  const convidadosRsvpPendente = convidados.filter((c) => c.statusRsvp === "PENDENTE");
   const todosSelecionadosNaTela =
     convidadosFiltrados.length > 0 &&
     convidadosFiltrados.every((c) => selecionados.has(c.id));
@@ -77,30 +76,13 @@ function ConvidadosContent() {
     });
   }
 
-  function adicionarConvidado(dados: { nome: string; email: string; telefone: string; grupo: string }) {
-    const novo: Convidado = {
-      id: crypto.randomUUID(),
-      nome: dados.nome,
-      email: dados.email,
-      telefone: dados.telefone,
-      grupo: dados.grupo,
-      emailEnviadoEm: null,
-      statusRsvp: "PENDENTE",
-    };
-    setConvidados((atuais) => [novo, ...atuais]);
+  function handleAdicionarConvidado(dados: { nome: string; email: string; telefone: string; grupo: string }) {
+    adicionarConvidado(dados);
     setModalAdicionar(false);
   }
 
-  function marcarEmailsComoEnviados(ids: string[]) {
-    const hoje = new Date();
-    const dataFormatada = `${String(hoje.getDate()).padStart(2, "0")} ${
-      ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"][hoje.getMonth()]
-    }`;
-    setConvidados((atuais) =>
-      atuais.map((c) =>
-        ids.includes(c.id) ? { ...c, emailEnviadoEm: dataFormatada } : c,
-      ),
-    );
+  function handleEnviarEmails(ids: string[]) {
+    marcarEmailsComoEnviados(ids);
     setModalEmail(false);
     setSelecionados(new Set());
   }
@@ -122,20 +104,20 @@ function ConvidadosContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => setModalEmail(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium text-foreground hover:bg-black/5"
+            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-black/5 sm:px-4"
           >
             <Mail size={16} />
-            Enviar e-mail
+            <span className="hidden sm:inline">Enviar e-mail</span>
           </button>
           <button
             onClick={() => setModalAdicionar(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
+            className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary-hover sm:px-4"
           >
             <Plus size={16} />
-            Adicionar convidado
+            <span className="hidden sm:inline">Adicionar</span>
           </button>
         </div>
       </div>
@@ -177,37 +159,40 @@ function ConvidadosContent() {
             />
           </div>
         </div>
-        {pendentesDeEmail.length > 0 && (
+        {convidadosRsvpPendente.length > 0 && (
           <button
-            onClick={() => setModalEmail(true)}
+            onClick={() => {
+              setSelecionados(new Set(convidadosRsvpPendente.map((c) => c.id)));
+              setModalEmail(true);
+            }}
             className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
           >
-            Enviar para {pendentesDeEmail.length} pendentes
+            Enviar para {convidadosRsvpPendente.length} pendentes
           </button>
         )}
       </div>
 
         {selecionados.size > 0 && (
-        <div className="flex items-center justify-between rounded-2xl bg-primary px-5 py-3 text-white">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-primary px-4 py-3 text-white sm:px-5">
           <p className="text-sm font-medium">
-            {selecionados.size} convidado{selecionados.size > 1 ? "s" : ""} selecionado
-            {selecionados.size > 1 ? "s" : ""}
+            {selecionados.size} selecionado{selecionados.size > 1 ? "s" : ""}
           </p>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setModalEmail(true)}
-              className="flex cursor-pointer items-center gap-2 rounded-lg bg-white/15 px-4 py-1.5 text-sm font-medium hover:bg-white/25"
-            >
-              <Mail size={15} />
-              Enviar e-mail
-            </button>
-            <button
-              onClick={() => setSelecionados(new Set())}
-              className="cursor-pointer text-sm font-medium text-white/90 hover:text-white"
-            >
-              Cancelar
-            </button>
-          </div>
+          <div className="flex items-center gap-3 sm:gap-4">
+          <button
+            onClick={() => setModalEmail(true)}
+            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-black/5 sm:px-4"
+          >
+            <Mail size={16} />
+            <span className="hidden sm:inline">Enviar e-mail</span>
+          </button>
+          <button
+            onClick={() => setModalAdicionar(true)}
+            className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary-hover sm:px-4"
+          >
+            <Plus size={16} />
+            <span className="hidden sm:inline">Adicionar</span>
+          </button>
+        </div>
         </div>
       )}
 
@@ -252,7 +237,7 @@ function ConvidadosContent() {
                 </th>
                 <th className="px-3 py-3">Nome</th>
                 <th className="px-3 py-3">E-mail</th>
-                <th className="px-3 py-3">Grupo</th>
+                <th className="hidden px-3 py-3 sm:table-cell">Grupo</th>
                 <th className="px-3 py-3">E-mail enviado</th>
                 <th className="px-3 py-3">RSVP</th>
               </tr>
@@ -289,7 +274,7 @@ function ConvidadosContent() {
                       </div>
                     </td>
                     <td className="px-3 py-3.5 text-muted">{convidado.email}</td>
-                    <td className="px-3 py-3.5">
+                    <td className="hidden px-3 py-3.5 sm:table-cell">
                       <span className="rounded-full bg-[#FAF7F2] px-2.5 py-1 text-xs text-muted">
                         {convidado.grupo}
                       </span>
@@ -342,7 +327,7 @@ function ConvidadosContent() {
       {modalAdicionar && (
         <AdicionarConvidadoModal
           onClose={() => setModalAdicionar(false)}
-          onAdicionar={adicionarConvidado}
+          onAdicionar={handleAdicionarConvidado}
         />
       )}
 
@@ -354,7 +339,7 @@ function ConvidadosContent() {
               : convidados
           }
           onClose={() => setModalEmail(false)}
-          onEnviar={marcarEmailsComoEnviados}
+          onEnviar={handleEnviarEmails}
         />
       )}
     </div>

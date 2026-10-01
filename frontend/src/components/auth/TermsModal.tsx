@@ -37,7 +37,7 @@ export function TermsModal({
         className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between border-b border-border px-8 py-6">
+        <div className="flex items-start justify-between border-b border-border px-4 py-4 sm:px-6 sm:py-5">
           <div>
             <h2 className="font-serif text-2xl font-bold text-foreground">
               {titulo}
@@ -53,7 +53,7 @@ export function TermsModal({
           </button>
         </div>
 
-        <div className="overflow-y-auto px-8 py-6">
+        <div className="overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
           <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">
             {conteudo}
           </p>

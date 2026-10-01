@@ -33,4 +33,30 @@ export class EmailService {
       `,
     });
   }
+
+    async enviarConvite(
+    destinatario: string,
+    nome: string,
+    assunto: string,
+    mensagemTemplate: string,
+    linkRsvp: string,
+  ) {
+    const mensagemPersonalizada = mensagemTemplate
+      .replace(/\{nome\}/g, nome)
+      .replace(/\{link_rsvp\}/g, linkRsvp);
+
+    const htmlMensagem = mensagemPersonalizada.replace(/\n/g, '<br>');
+
+    await this.transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: destinatario,
+      subject: assunto,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; line-height: 1.6;">
+          ${htmlMensagem}
+        </div>
+      `,
+    });
+  }
 }
+

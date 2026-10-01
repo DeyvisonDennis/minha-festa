@@ -8,11 +8,13 @@ import { TermsModal } from "@/components/auth/TermsModal";
 import { TERMOS_DE_USO, POLITICA_DE_PRIVACIDADE } from "@/lib/legal-content";
 import { apiFetch, ApiError, googleAuthUrl } from "@/lib/api";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { useAuth } from "@/context/AuthContext";
 
 type ModalAberto = "termos" | "privacidade" | null;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { recarregar } = useAuth();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [carregando, setCarregando] = useState(false);
@@ -31,6 +33,7 @@ export default function LoginPage() {
         method: "POST",
         body: JSON.stringify({ email, senha }),
       });
+      await recarregar();
       router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
