@@ -5,16 +5,22 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  closestCorners,
   useSensor,
   useSensors,
-  useDraggable,
   useDroppable,
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Calendar as CalendarIcon, Plus } from "lucide-react";
 import {
-  TAREFAS_MOCK,
   STATUS_CONFIG,
   PRIORIDADE_COR,
   formatarDataCurta,
@@ -48,14 +54,14 @@ function TarefaCard({ tarefa, arrastando }: { tarefa: Tarefa; arrastando?: boole
   );
 }
 
-function TarefaDraggable({ tarefa }: { tarefa: Tarefa }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: tarefa.id,
-  });
+function TarefaSortable({ tarefa }: { tarefa: Tarefa }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: tarefa.id });
 
-  const style = transform
-    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
-    : undefined;
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   return (
     <div
@@ -73,6 +79,7 @@ function TarefaDraggable({ tarefa }: { tarefa: Tarefa }) {
 function Coluna({ status, tarefas }: { status: StatusTarefa; tarefas: Tarefa[] }) {
   const statusInfo = STATUS_CONFIG[status];
   const { setNodeRef, isOver } = useDroppable({ id: status });
+  const ids = tarefas.map((t) => t.id);
 
   return (
     <div
@@ -92,9 +99,11 @@ function Coluna({ status, tarefas }: { status: StatusTarefa; tarefas: Tarefa[] }
       </div>
 
       <div className="mt-3 min-h-[60px] space-y-3">
-        {tarefas.map((tarefa) => (
-          <TarefaDraggable key={tarefa.id} tarefa={tarefa} />
-        ))}
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          {tarefas.map((tarefa) => (
+            <TarefaSortable key={tarefa.id} tarefa={tarefa} />
+          ))}
+        </SortableContext>
 
         <button className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-[#FAF7F2] py-2 text-xs font-medium text-muted hover:text-foreground">
           <Plus size={14} />
@@ -105,8 +114,12 @@ function Coluna({ status, tarefas }: { status: StatusTarefa; tarefas: Tarefa[] }
   );
 }
 
-export function KanbanView() {
-  const [tarefas, setTarefas] = useState<Tarefa[]>(TAREFAS_MOCK);
+type KanbanViewProps = {
+  tarefas: Tarefa[];
+  onReordenar: (tarefas: Tarefa[]) => void;
+};
+
+export function KanbanView({ tarefas, onReordenar }: KanbanViewProps) {
   const [idArrastando, setIdArrastando] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -119,26 +132,72 @@ export function KanbanView() {
     setIdArrastando(String(event.active.id));
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+    function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     setIdArrastando(null);
-
     if (!over) return;
 
-    const novoStatus = over.id as StatusTarefa;
-    const tarefaId = String(active.id);
+    const activeId = String(active.id);
+    const overId = String(over.id);
+    if (activeId === overId) return;
 
-    setTarefas((atuais) =>
-      atuais.map((t) =>
-        t.id === tarefaId && t.status !== novoStatus ? { ...t, status: novoStatus } : t,
-      ),
-    );
+    const activeTarefa = tarefas.find((t) => t.id === activeId);
+    if (!activeTarefa) return;
+
+    const ehColuna = COLUNAS.includes(overId as StatusTarefa);
+    const overTarefa = ehColuna ? null : tarefas.find((t) => t.id === overId);
+    const novoStatus = ehColuna ? (overId as StatusTarefa) : overTarefa?.status;
+    if (!novoStatus) return;
+
+    const mesmaColuna = !ehColuna && activeTarefa.status === novoStatus;
+
+    if (mesmaColuna) {
+      // Reordenando dentro da mesma coluna: usamos arrayMove sobre a
+      // sub-lista dessa coluna, que calcula corretamente o deslocamento
+      // em qualquer direção (para cima ou para baixo).
+      const colunaAtual = tarefas.filter((t) => t.status === novoStatus);
+      const oldIndex = colunaAtual.findIndex((t) => t.id === activeId);
+      const newIndex = colunaAtual.findIndex((t) => t.id === overId);
+      if (oldIndex === -1 || newIndex === -1) return;
+
+      const colunaReordenada = arrayMove(colunaAtual, oldIndex, newIndex);
+
+      let cursor = 0;
+      const novaLista = tarefas.map((t) =>
+        t.status === novoStatus ? colunaReordenada[cursor++] : t,
+      );
+      onReordenar(novaLista);
+      return;
+    }
+
+    // Movendo para outra coluna (ou soltando na área vazia dela).
+    const semAtiva = tarefas.filter((t) => t.id !== activeId);
+
+    let posicaoGlobal: number;
+    if (overTarefa) {
+      posicaoGlobal = semAtiva.findIndex((t) => t.id === overId);
+    } else {
+      let ultimoIndiceDaColuna = -1;
+      semAtiva.forEach((t, i) => {
+        if (t.status === novoStatus) ultimoIndiceDaColuna = i;
+      });
+      posicaoGlobal = ultimoIndiceDaColuna + 1;
+    }
+
+    const novaLista = [...semAtiva];
+    novaLista.splice(posicaoGlobal, 0, { ...activeTarefa, status: novoStatus });
+    onReordenar(novaLista);
   }
 
   const tarefaArrastando = tarefas.find((t) => t.id === idArrastando);
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {COLUNAS.map((status) => (
           <Coluna

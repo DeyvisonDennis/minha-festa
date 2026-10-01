@@ -1,15 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Calendar as CalendarIcon, Check } from "lucide-react";
+import { Search, Calendar as CalendarIcon } from "lucide-react";
 import {
-  TAREFAS_MOCK,
   STATUS_CONFIG,
   PRIORIDADE_COR,
   formatarDataCurta,
   type StatusTarefa,
   type Tarefa,
 } from "@/lib/mock-cronograma";
+import { StatusSelect } from "./StatusSelect";
+import { normalizarTexto } from "@/lib/normalizar-texto";
 
 type Filtro = "TODOS" | StatusTarefa;
 
@@ -20,25 +21,20 @@ const FILTROS: { id: Filtro; label: string }[] = [
   { id: "CONCLUIDA", label: "Concluído" },
 ];
 
-export function ListaView() {
-  const [tarefas, setTarefas] = useState<Tarefa[]>(TAREFAS_MOCK);
+type ListaViewProps = {
+  tarefas: Tarefa[];
+  onAlterarStatus: (id: string, status: StatusTarefa) => void;
+};
+
+export function ListaView({ tarefas, onAlterarStatus }: ListaViewProps) {
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("TODOS");
 
-  function alternarConcluida(id: string) {
-    setTarefas((atuais) =>
-      atuais.map((t) =>
-        t.id === id
-          ? { ...t, status: t.status === "CONCLUIDA" ? "PENDENTE" : "CONCLUIDA" }
-          : t,
-      ),
-    );
-  }
-
   const tarefasFiltradas = useMemo(() => {
+  const buscaNormalizada = normalizarTexto(busca);
     return tarefas.filter((t) => {
       const bateFiltro = filtro === "TODOS" || t.status === filtro;
-      const bateBusca = t.titulo.toLowerCase().includes(busca.toLowerCase());
+      const bateBusca = normalizarTexto(t.titulo).includes(buscaNormalizada);
       return bateFiltro && bateBusca;
     });
   }, [tarefas, busca, filtro]);
@@ -87,25 +83,12 @@ export function ListaView() {
         {tarefasFiltradas.map((tarefa) => {
           const concluida = tarefa.status === "CONCLUIDA";
           const { dia, mes } = formatarDataCurta(tarefa.prazoISO);
-          const statusInfo = STATUS_CONFIG[tarefa.status];
 
           return (
             <div
               key={tarefa.id}
               className="flex items-center gap-4 px-5 py-4 hover:bg-black/[0.02]"
             >
-              <button
-                onClick={() => alternarConcluida(tarefa.id)}
-                aria-label={concluida ? "Marcar como não concluída" : "Marcar como concluída"}
-                className={`flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full border transition ${
-                  concluida
-                    ? "border-green-600 bg-green-600"
-                    : "border-border hover:border-primary"
-                }`}
-              >
-                {concluida && <Check size={12} className="text-white" />}
-              </button>
-
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p
@@ -131,11 +114,10 @@ export function ListaView() {
                 {dia} {mes}
               </span>
 
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${statusInfo.bg} ${statusInfo.text}`}
-              >
-                {statusInfo.label}
-              </span>
+              <StatusSelect
+                status={tarefa.status}
+                onChange={(status) => onAlterarStatus(tarefa.id, status)}
+              />
             </div>
           );
         })}

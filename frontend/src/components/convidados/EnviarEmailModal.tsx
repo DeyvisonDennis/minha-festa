@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Send } from "lucide-react";
 import type { Convidado } from "@/lib/mock-convidados";
+import { apiFetch, ApiError } from "@/lib/api";
+import { LINK_RSVP_MOCK } from "@/lib/mock-convidados";
 
 type EnviarEmailModalProps = {
   convidados: Convidado[];
@@ -30,6 +32,8 @@ export function EnviarEmailModal({
   const [aba, setAba] = useState<"compor" | "enviados">("compor");
   const [assunto, setAssunto] = useState("Você está convidado! 💌 Casamento Ana & Pedro");
   const [mensagem, setMensagem] = useState(MENSAGEM_PADRAO);
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -48,8 +52,40 @@ export function EnviarEmailModal({
     primeiroConvidado?.nome.split(" ")[0] ?? "",
   );
 
-  function handleEnviar() {
-    onEnviar(convidados.map((c) => c.id));
+    async function handleEnviar() {
+    setErro(null);
+    setEnviando(true);
+
+    try {
+      const resultado = await apiFetch<{ enviados: number; falhas: number; total: number }>(
+        "/convidados/enviar-convites",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            destinatarios: convidados.map((c) => ({ nome: c.nome, email: c.email })),
+            assunto,
+            mensagem,
+            linkRsvp: `https://${LINK_RSVP_MOCK}`,
+          }),
+        },
+      );
+
+      if (resultado.falhas > 0) {
+        setErro(
+          `${resultado.enviados} de ${resultado.total} e-mails enviados. ${resultado.falhas} falharam — verifique os endereços.`,
+        );
+      }
+
+      onEnviar(convidados.map((c) => c.id));
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setErro(err.message);
+      } else {
+        setErro("Não foi possível conectar ao servidor. Tente novamente.");
+      }
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return createPortal(
@@ -72,7 +108,7 @@ export function EnviarEmailModal({
           </button>
         </div>
 
-        <div className="flex gap-1 border-b border-border px-6 pt-3">
+        <div className="flex gap-1 border-b border-border px-4 pt-3 sm:px-6">
           <button
             onClick={() => setAba("compor")}
             className={`cursor-pointer rounded-t-lg px-4 py-2 text-sm font-medium ${
@@ -177,23 +213,32 @@ export function EnviarEmailModal({
           )}
         </div>
 
-        {aba === "compor" && (
-          <div className="flex items-center justify-between border-t border-border px-6 py-4">
-            <p className="text-sm text-muted">{convidados.length} destinatários</p>
-            <div className="flex gap-3">
-              <button
-                onClick={onClose}
-                className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-black/5"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleEnviar}
-                className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
-              >
-                <Send size={15} />
-                Enviar e-mails
-              </button>
+                {aba === "compor" && (
+          <div className="border-t border-border px-6 py-4">
+            {erro && (
+              <p className="mb-3 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700">
+                {erro}
+              </p>
+            )}
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted">{convidados.length} destinatários</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={onClose}
+                  disabled={enviando}
+                  className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-black/5 disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleEnviar}
+                  disabled={enviando}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Send size={15} />
+                  {enviando ? "Enviando..." : "Enviar e-mails"}
+                </button>
+              </div>
             </div>
           </div>
         )}

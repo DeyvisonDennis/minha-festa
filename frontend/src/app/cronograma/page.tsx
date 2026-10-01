@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 import { List, LayoutGrid, Calendar as CalendarIcon, Plus } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
-import { TAREFAS_MOCK } from "@/lib/mock-cronograma";
+import { useTarefasCronograma } from "@/hooks/useTarefasCronograma";
 import { ListaView } from "@/components/cronograma/ListaView";
 import { KanbanView } from "@/components/cronograma/KanbanView";
 import { CalendarioView } from "@/components/cronograma/CalendarioView";
+import { NovaTarefaModal } from "@/components/cronograma/NovaTarefaModal";
+
 
 type Visualizacao = "lista" | "kanban" | "calendario";
 
@@ -18,15 +20,16 @@ const ABAS: { id: Visualizacao; label: string; icon: typeof List }[] = [
 
 function CronogramaContent() {
   const [aba, setAba] = useState<Visualizacao>("lista");
-
+  const { tarefas, alterarStatus, adicionarTarefa, reordenarTarefas } = useTarefasCronograma();
+  const [modalNovaTarefa, setModalNovaTarefa] = useState(false);
   const resumo = useMemo(() => {
-    const aFazer = TAREFAS_MOCK.filter((t) => t.status === "PENDENTE").length;
-    const emAndamento = TAREFAS_MOCK.filter((t) => t.status === "EM_ANDAMENTO").length;
-    const concluidas = TAREFAS_MOCK.filter((t) => t.status === "CONCLUIDA").length;
-    const total = TAREFAS_MOCK.length;
+    const aFazer = tarefas.filter((t) => t.status === "PENDENTE").length;
+    const emAndamento = tarefas.filter((t) => t.status === "EM_ANDAMENTO").length;
+    const concluidas = tarefas.filter((t) => t.status === "CONCLUIDA").length;
+    const total = tarefas.length;
     const progresso = total > 0 ? Math.round((concluidas / total) * 100) : 0;
     return { aFazer, emAndamento, concluidas, total, progresso };
-  }, []);
+  }, [tarefas]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -40,7 +43,7 @@ function CronogramaContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex rounded-lg border border-border bg-white p-1">
             {ABAS.map(({ id, label, icon: Icon }) => (
               <button
@@ -53,14 +56,17 @@ function CronogramaContent() {
                 }`}
               >
                 <Icon size={15} />
-                {label}
+                <span className="hidden sm:inline">{label}</span>
               </button>
             ))}
           </div>
 
-          <button className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover">
+          <button
+            onClick={() => setModalNovaTarefa(true)}
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary-hover sm:px-4"
+          >
             <Plus size={16} />
-            Nova tarefa
+            <span className="hidden sm:inline">Nova tarefa</span>
           </button>
         </div>
       </div>
@@ -94,9 +100,25 @@ function CronogramaContent() {
         </div>
       </div>
 
-      {aba === "lista" && <ListaView />}
-      {aba === "kanban" && <KanbanView />}
-      {aba === "calendario" && <CalendarioView />}
+      {aba === "lista" && (
+        <ListaView tarefas={tarefas} onAlterarStatus={alterarStatus} />
+      )}
+      {aba === "kanban" && (
+        <KanbanView tarefas={tarefas} onReordenar={reordenarTarefas} />
+      )}
+     {aba === "calendario" && (
+        <CalendarioView
+          tarefas={tarefas}
+          onAlterarStatus={alterarStatus}
+          onAdicionarTarefa={adicionarTarefa}
+        />
+      )}
+      {modalNovaTarefa && (
+        <NovaTarefaModal
+          onClose={() => setModalNovaTarefa(false)}
+          onAdicionar={adicionarTarefa}
+        />
+      )}
     </div>
   );
 }
