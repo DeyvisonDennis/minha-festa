@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { ApiError, apiFetch } from "@/lib/api";
 
 type Usuario = {
   id: string;
@@ -18,9 +18,29 @@ type Usuario = {
   ativo: boolean;
 };
 
+type ResultadoSessao =
+  | { tipo: "logado"; usuario: Usuario }
+  | { tipo: "deslogado" }
+  | { tipo: "erro" };
+
+// Só 401/403 significam "não está logado". Qualquer outra falha (servidor
+// fora do ar, erro 500, rede) NÃO pode ser tratada como logout.
+async function consultarSessao(): Promise<ResultadoSessao> {
+  try {
+    const data = await apiFetch<{ usuario: Usuario }>("/auth/me");
+    return { tipo: "logado", usuario: data.usuario };
+  } catch (err) {
+    if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+      return { tipo: "deslogado" };
+    }
+    return { tipo: "erro" };
+  }
+}
+
 type AuthContextType = {
   usuario: Usuario | null;
   carregando: boolean;
+  erroConexao: boolean;
   recarregar: () => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -28,32 +48,22 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [carregando, setCarregando] = useState(true);
-
-  const carregarUsuario = useCallback(async () => {
-    try {
-      const data = await apiFetch<{ usuario: Usuario }>("/auth/me");
-      setUsuario(data.usuario);
-    } catch {
-      setUsuario(null);
-    } finally {
-      setCarregando(false);
-    }
-  }, []);
+  const [erroConexao, setErroConexao] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
 
     async function carregarInicial() {
-      try {
-        const data = await apiFetch<{ usuario: Usuario }>("/auth/me");
-        if (!cancelado) setUsuario(data.usuario);
-      } catch {
-        if (!cancelado) setUsuario(null);
-      } finally {
-        if (!cancelado) setCarregando(false);
-      }
+      const resultado = await consultarSessao();
+      if (cancelado) return;
+
+      if (resultado.tipo === "logado") setUsuario(resultado.usuario);
+      if (resultado.tipo === "deslogado") setUsuario(null);
+      setErroConexao(resultado.tipo === "erro");
+      setCarregando(false);
     }
 
     carregarInicial();
@@ -63,7 +73,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const router = useRouter();
+  const recarregar = useCallback(async () => {
+    setCarregando(true);
+    const resultado = await consultarSessao();
+
+    if (resultado.tipo === "logado") setUsuario(resultado.usuario);
+    if (resultado.tipo === "deslogado") setUsuario(null);
+    setErroConexao(resultado.tipo === "erro");
+    setCarregando(false);
+  }, []);
 
   const logout = useCallback(async () => {
     try {
@@ -76,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ usuario, carregando, recarregar: carregarUsuario, logout }}
+      value={{ usuario, carregando, erroConexao, recarregar, logout }}
     >
       {children}
     </AuthContext.Provider>

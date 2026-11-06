@@ -4,17 +4,16 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Plus, Calendar as CalendarIcon } from "lucide-react";
 import {
+  CATEGORIAS_TAREFA,
   PRIORIDADE_COR,
+  type NovaTarefa,
   type Prioridade,
   type StatusTarefa,
   type Tarefa,
-} from "@/lib/mock-cronograma";
+} from "@/lib/cronograma";
 import { StatusSelect } from "./StatusSelect";
-
-const CATEGORIAS_SUGERIDAS = [
-  "Fornecedor", "Catering", "Moda", "Convites", "Financeiro",
-  "Música", "Decoração", "Logística", "Digital",
-];
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
 
 type DiaDetalheModalProps = {
   dataISO: string;
@@ -22,7 +21,7 @@ type DiaDetalheModalProps = {
   tarefas: Tarefa[];
   onClose: () => void;
   onAlterarStatus: (id: string, status: StatusTarefa) => void;
-  onAdicionarTarefa: (tarefa: Omit<Tarefa, "id">) => void;
+  onAdicionarTarefa: (tarefa: NovaTarefa) => Promise<void>;
 };
 
 export function DiaDetalheModal({
@@ -36,8 +35,10 @@ export function DiaDetalheModal({
   const [mostrarForm, setMostrarForm] = useState(false);
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [categoria, setCategoria] = useState(CATEGORIAS_SUGERIDAS[0]);
+  const [categoria, setCategoria] = useState(CATEGORIAS_TAREFA[0]);
   const [prioridade, setPrioridade] = useState<Prioridade>("MEDIA");
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -46,23 +47,34 @@ export function DiaDetalheModal({
     };
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!titulo.trim()) return;
 
-    onAdicionarTarefa({
-      titulo,
-      descricao,
-      categoria,
-      prazoISO: dataISO,
-      status: "PENDENTE",
-      prioridade,
-      responsavel: "",
-    });
+    setErro(null);
+    setSalvando(true);
 
-    setTitulo("");
-    setDescricao("");
+    try {
+      await onAdicionarTarefa({
+        titulo,
+        descricao,
+        categoria,
+        prazoISO: dataISO,
+        prioridade,
+      });
+      setTitulo("");
+      setDescricao("");
+      setMostrarForm(false);
+    } catch (err) {
+      setErro(mensagemDeErro(err));
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  function cancelarForm() {
     setMostrarForm(false);
+    setErro(null);
   }
 
   return createPortal(
@@ -77,9 +89,7 @@ export function DiaDetalheModal({
         <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div className="flex items-center gap-2">
             <CalendarIcon size={18} className="text-muted" />
-            <h2 className="font-serif text-lg font-bold text-foreground">
-              {dataFormatada}
-            </h2>
+            <h2 className="font-serif text-lg font-bold text-foreground">{dataFormatada}</h2>
           </div>
           <button
             onClick={onClose}
@@ -103,9 +113,7 @@ export function DiaDetalheModal({
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground">
-                        {tarefa.titulo}
-                      </p>
+                      <p className="text-sm font-semibold text-foreground">{tarefa.titulo}</p>
                       <span
                         className={`h-1.5 w-1.5 shrink-0 rounded-full ${PRIORIDADE_COR[tarefa.prioridade]}`}
                       />
@@ -127,7 +135,10 @@ export function DiaDetalheModal({
           </div>
 
           {mostrarForm ? (
-            <form onSubmit={handleSubmit} className="mt-4 space-y-3 rounded-xl border border-border p-4">
+            <form
+              onSubmit={handleSubmit}
+              className="mt-4 space-y-3 rounded-xl border border-border p-4"
+            >
               <div>
                 <label className="text-xs font-medium text-foreground">Título</label>
                 <input
@@ -137,7 +148,7 @@ export function DiaDetalheModal({
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
                   placeholder="Nome da tarefa"
-                  className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+                  className="mt-1 w-full rounded-lg border border-border px-4 py-2.5 text-sm outline-none focus:border-primary"
                 />
               </div>
 
@@ -148,7 +159,7 @@ export function DiaDetalheModal({
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
                   placeholder="Opcional"
-                  className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+                  className="mt-1 w-full rounded-lg border border-border px-4 py-2.5 text-sm outline-none focus:border-primary"
                 />
               </div>
 
@@ -158,10 +169,12 @@ export function DiaDetalheModal({
                   <select
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
-                    className="mt-1 w-full cursor-pointer rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+                    className="mt-1 w-full cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm outline-none focus:border-primary"
                   >
-                    {CATEGORIAS_SUGERIDAS.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                    {CATEGORIAS_TAREFA.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -171,7 +184,7 @@ export function DiaDetalheModal({
                   <select
                     value={prioridade}
                     onChange={(e) => setPrioridade(e.target.value as Prioridade)}
-                    className="mt-1 w-full cursor-pointer rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+                    className="mt-1 w-full cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm outline-none focus:border-primary"
                   >
                     <option value="ALTA">Alta</option>
                     <option value="MEDIA">Média</option>
@@ -180,19 +193,23 @@ export function DiaDetalheModal({
                 </div>
               </div>
 
+              <AlertaErro>{erro}</AlertaErro>
+
               <div className="flex gap-2 pt-1">
                 <button
                   type="button"
-                  onClick={() => setMostrarForm(false)}
-                  className="flex-1 cursor-pointer rounded-lg border border-border py-2 text-sm font-medium text-foreground hover:bg-black/5"
+                  onClick={cancelarForm}
+                  disabled={salvando}
+                  className="flex-1 cursor-pointer rounded-lg border border-border py-2 text-sm font-medium text-foreground hover:bg-black/5 disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 cursor-pointer rounded-lg bg-primary py-2 text-sm font-semibold text-white hover:bg-primary-hover"
+                  disabled={salvando}
+                  className="flex-1 cursor-pointer rounded-lg bg-primary py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Adicionar
+                  {salvando ? "Salvando..." : "Adicionar"}
                 </button>
               </div>
             </form>

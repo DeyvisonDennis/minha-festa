@@ -52,7 +52,10 @@ export async function apiFetch<T>(
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const message = data?.message ?? "Ocorreu um erro. Tente novamente.";
+    const bruto = data?.message;
+    const message = Array.isArray(bruto)
+      ? bruto.join(" ")
+      : (bruto ?? "Ocorreu um erro. Tente novamente.");
     const errorCode = data?.errorCode;
     throw new ApiError(message, res.status, errorCode);
   }

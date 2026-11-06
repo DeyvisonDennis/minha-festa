@@ -8,7 +8,9 @@ import { ListaView } from "@/components/cronograma/ListaView";
 import { KanbanView } from "@/components/cronograma/KanbanView";
 import { CalendarioView } from "@/components/cronograma/CalendarioView";
 import { NovaTarefaModal } from "@/components/cronograma/NovaTarefaModal";
-
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
 
 type Visualizacao = "lista" | "kanban" | "calendario";
 
@@ -20,7 +22,17 @@ const ABAS: { id: Visualizacao; label: string; icon: typeof List }[] = [
 
 function CronogramaContent() {
   const [aba, setAba] = useState<Visualizacao>("lista");
-  const { tarefas, alterarStatus, adicionarTarefa, reordenarTarefas } = useTarefasCronograma();
+  const {
+    tarefas,
+    carregando,
+    erro,
+    erroAcao,
+    limparErroAcao,
+    recarregar,
+    alterarStatus,
+    adicionarTarefa,
+    reordenarTarefas,
+  } = useTarefasCronograma();
   const [modalNovaTarefa, setModalNovaTarefa] = useState(false);
   const resumo = useMemo(() => {
     const aFazer = tarefas.filter((t) => t.status === "PENDENTE").length;
@@ -31,8 +43,23 @@ function CronogramaContent() {
     return { aFazer, emAndamento, concluidas, total, progresso };
   }, [tarefas]);
 
+  if (carregando) {
+    return <TelaCarregando ocupaTela={false} mensagem="Carregando cronograma..." />;
+  }
+
+  if (erro) {
+    return (
+      <TelaErroConexao
+        ocupaTela={false}
+        mensagem="Não foi possível carregar o cronograma."
+        onTentarNovamente={recarregar}
+      />
+    );
+  }
+
   return (
     <div className="mx-auto max-w-6xl space-y-6">
+      <AlertaErro onFechar={limparErroAcao}>{erroAcao}</AlertaErro>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-2xl font-bold text-foreground">
@@ -106,7 +133,7 @@ function CronogramaContent() {
       {aba === "kanban" && (
         <KanbanView tarefas={tarefas} onReordenar={reordenarTarefas} />
       )}
-     {aba === "calendario" && (
+      {aba === "calendario" && (
         <CalendarioView
           tarefas={tarefas}
           onAlterarStatus={alterarStatus}

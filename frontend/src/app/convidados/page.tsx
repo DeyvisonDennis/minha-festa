@@ -3,14 +3,19 @@
 import { useMemo, useState } from "react";
 import { Mail, Plus, Search, Check, Copy } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
-import {
-  RSVP_CONFIG,
-  LINK_RSVP_MOCK,
-  type StatusRsvp,
-} from "@/lib/mock-convidados";
-import { useConvidados } from "@/hooks/useConvidados";
 import { AdicionarConvidadoModal } from "@/components/convidados/AdicionarConvidadoModal";
 import { EnviarEmailModal } from "@/components/convidados/EnviarEmailModal";
+import { useConvidados } from "@/hooks/useConvidados";
+import { copiarTexto } from "@/lib/clipboard";
+import {
+  RSVP_CONFIG,
+  type Convidado,
+  type NovoConvidado,
+  type StatusRsvp,
+} from "@/lib/convidados";
+import { normalizarTexto } from "@/lib/normalizar-texto";
+import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
 
 type Filtro = "TODOS" | StatusRsvp;
 
@@ -22,13 +27,15 @@ const FILTROS: { id: Filtro; label: string }[] = [
 ];
 
 function ConvidadosContent() {
-  const { convidados, adicionarConvidado, marcarEmailsComoEnviados } = useConvidados();
+  const { convidados, carregando, erro, recarregar, adicionarConvidado, enviarConvites } =
+    useConvidados();
+
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("TODOS");
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [modalAdicionar, setModalAdicionar] = useState(false);
   const [modalEmail, setModalEmail] = useState(false);
-  const [linkCopiado, setLinkCopiado] = useState(false);
+  const [copiadoId, setCopiadoId] = useState<string | null>(null);
 
   const resumo = useMemo(() => {
     const total = convidados.length;
@@ -40,19 +47,18 @@ function ConvidadosContent() {
   }, [convidados]);
 
   const convidadosFiltrados = useMemo(() => {
+    const termo = normalizarTexto(busca);
     return convidados.filter((c) => {
       const bateFiltro = filtro === "TODOS" || c.statusRsvp === filtro;
-      const termo = busca.toLowerCase();
       const bateBusca =
-        c.nome.toLowerCase().includes(termo) || c.email.toLowerCase().includes(termo);
+        normalizarTexto(c.nome).includes(termo) || normalizarTexto(c.email).includes(termo);
       return bateFiltro && bateBusca;
     });
   }, [convidados, busca, filtro]);
 
   const convidadosRsvpPendente = convidados.filter((c) => c.statusRsvp === "PENDENTE");
   const todosSelecionadosNaTela =
-    convidadosFiltrados.length > 0 &&
-    convidadosFiltrados.every((c) => selecionados.has(c.id));
+    convidadosFiltrados.length > 0 && convidadosFiltrados.every((c) => selecionados.has(c.id));
 
   function alternarSelecao(id: string) {
     setSelecionados((atuais) => {
@@ -65,33 +71,51 @@ function ConvidadosContent() {
 
   function alternarSelecionarTodos() {
     setSelecionados((atuais) => {
-      if (todosSelecionadosNaTela) {
-        const novo = new Set(atuais);
-        convidadosFiltrados.forEach((c) => novo.delete(c.id));
-        return novo;
-      }
       const novo = new Set(atuais);
-      convidadosFiltrados.forEach((c) => novo.add(c.id));
+      if (todosSelecionadosNaTela) {
+        convidadosFiltrados.forEach((c) => novo.delete(c.id));
+      } else {
+        convidadosFiltrados.forEach((c) => novo.add(c.id));
+      }
       return novo;
     });
   }
 
-  function handleAdicionarConvidado(dados: { nome: string; email: string; telefone: string; grupo: string }) {
-    adicionarConvidado(dados);
+  async function handleAdicionarConvidado(dados: NovoConvidado) {
+    await adicionarConvidado(dados);
     setModalAdicionar(false);
   }
 
-  function handleEnviarEmails(ids: string[]) {
-    marcarEmailsComoEnviados(ids);
-    setModalEmail(false);
-    setSelecionados(new Set());
+  async function copiarLinkDoConvidado(convidado: Convidado) {
+    const copiou = await copiarTexto(convidado.linkRsvp);
+    
+    if (!convidado.linkRsvp) {
+      window.alert("Link indisponível no momento. Recarregue a página e tente de novo.");
+      return;
+    }
+    
+    if (!copiou) {
+      // Alguns navegadores bloqueiam a cópia automática: mostra o link para copiar à mão.
+      window.prompt("Copie o link do convite:", convidado.linkRsvp);
+      return;
+    }
+
+    setCopiadoId(convidado.id);
+    setTimeout(() => setCopiadoId((atual) => (atual === convidado.id ? null : atual)), 2000);
   }
 
-  function copiarLink() {
-    navigator.clipboard.writeText(`https://${LINK_RSVP_MOCK}`).then(() => {
-      setLinkCopiado(true);
-      setTimeout(() => setLinkCopiado(false), 2000);
-    });
+  if (carregando) {
+    return <TelaCarregando ocupaTela={false} mensagem="Carregando convidados..." />;
+  }
+
+  if (erro) {
+    return (
+      <TelaErroConexao
+        ocupaTela={false}
+        mensagem="Não foi possível carregar os convidados."
+        onTentarNovamente={recarregar}
+      />
+    );
   }
 
   return (
@@ -107,7 +131,8 @@ function ConvidadosContent() {
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => setModalEmail(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-black/5 sm:px-4"
+            disabled={convidados.length === 0}
+            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
           >
             <Mail size={16} />
             <span className="hidden sm:inline">Enviar e-mail</span>
@@ -127,15 +152,15 @@ function ConvidadosContent() {
           <p className="font-serif text-2xl font-bold text-foreground">{resumo.total}</p>
           <p className="text-xs text-muted">Total</p>
         </div>
-        <div className="rounded-2xl border border-border bg-green-50 p-5">
+        <div className="rounded-2xl bg-green-50 p-5">
           <p className="font-serif text-2xl font-bold text-green-700">{resumo.confirmados}</p>
           <p className="text-xs text-green-700/70">Confirmados</p>
         </div>
-        <div className="rounded-2xl border border-border bg-amber-50 p-5">
+        <div className="rounded-2xl bg-amber-50 p-5">
           <p className="font-serif text-2xl font-bold text-amber-700">{resumo.aguardando}</p>
           <p className="text-xs text-amber-700/70">Aguardando</p>
         </div>
-        <div className="rounded-2xl border border-border bg-red-50 p-5">
+        <div className="rounded-2xl bg-red-50 p-5">
           <p className="font-serif text-2xl font-bold text-red-700">{resumo.recusados}</p>
           <p className="text-xs text-red-700/70">Recusados</p>
         </div>
@@ -145,7 +170,7 @@ function ConvidadosContent() {
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FAF7F2]">
           <Mail size={18} className="text-foreground" />
         </span>
-        <div className="min-w-[200px] flex-1">
+        <div className="min-w-50 flex-1">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-foreground">E-mails enviados</p>
             <p className="text-sm text-muted">
@@ -155,7 +180,9 @@ function ConvidadosContent() {
           <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-border">
             <div
               className="h-full rounded-full bg-primary"
-              style={{ width: `${(resumo.emailsEnviados / resumo.total) * 100}%` }}
+              style={{
+                width: `${resumo.total > 0 ? (resumo.emailsEnviados / resumo.total) * 100 : 0}%`,
+              }}
             />
           </div>
         </div>
@@ -172,33 +199,35 @@ function ConvidadosContent() {
         )}
       </div>
 
-        {selecionados.size > 0 && (
+      {selecionados.size > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-primary px-4 py-3 text-white sm:px-5">
           <p className="text-sm font-medium">
             {selecionados.size} selecionado{selecionados.size > 1 ? "s" : ""}
           </p>
           <div className="flex items-center gap-3 sm:gap-4">
-          <button
-            onClick={() => setModalEmail(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-black/5 sm:px-4"
-          >
-            <Mail size={16} />
-            <span className="hidden sm:inline">Enviar e-mail</span>
-          </button>
-          <button
-            onClick={() => setModalAdicionar(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary-hover sm:px-4"
-          >
-            <Plus size={16} />
-            <span className="hidden sm:inline">Adicionar</span>
-          </button>
-        </div>
+            <button
+              onClick={() => setModalEmail(true)}
+              className="flex cursor-pointer items-center gap-2 rounded-lg bg-white/15 px-4 py-1.5 text-sm font-medium hover:bg-white/25"
+            >
+              <Mail size={15} />
+              Enviar e-mail
+            </button>
+            <button
+              onClick={() => setSelecionados(new Set())}
+              className="cursor-pointer text-sm font-medium text-white/90 hover:text-white"
+            >
+              Cancelar
+            </button>
+          </div>
         </div>
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[220px]">
-          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+        <div className="relative min-w-55 flex-1">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          />
           <input
             type="text"
             value={busca}
@@ -240,20 +269,23 @@ function ConvidadosContent() {
                 <th className="hidden px-3 py-3 sm:table-cell">Grupo</th>
                 <th className="px-3 py-3">E-mail enviado</th>
                 <th className="px-3 py-3">RSVP</th>
+                <th className="px-3 py-3">Link</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {convidadosFiltrados.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-8 text-center text-muted">
-                    Nenhum convidado encontrado.
+                  <td colSpan={7} className="px-5 py-8 text-center text-muted">
+                    {convidados.length === 0
+                      ? "Você ainda não cadastrou convidados. Clique em Adicionar para começar."
+                      : "Nenhum convidado encontrado."}
                   </td>
                 </tr>
               )}
               {convidadosFiltrados.map((convidado) => {
                 const rsvpInfo = RSVP_CONFIG[convidado.statusRsvp];
                 return (
-                  <tr key={convidado.id} className="hover:bg-black/[0.02]">
+                  <tr key={convidado.id} className="hover:bg-black/2">
                     <td className="px-5 py-3.5">
                       <input
                         type="checkbox"
@@ -269,15 +301,21 @@ function ConvidadosContent() {
                         </span>
                         <div className="min-w-0">
                           <p className="truncate font-semibold text-foreground">{convidado.nome}</p>
-                          <p className="truncate text-xs text-muted">{convidado.telefone}</p>
+                          {convidado.telefone && (
+                            <p className="truncate text-xs text-muted">{convidado.telefone}</p>
+                          )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-3.5 text-muted">{convidado.email}</td>
+                    <td className="px-3 py-3.5 text-muted">{convidado.email || "—"}</td>
                     <td className="hidden px-3 py-3.5 sm:table-cell">
-                      <span className="rounded-full bg-[#FAF7F2] px-2.5 py-1 text-xs text-muted">
-                        {convidado.grupo}
-                      </span>
+                      {convidado.grupo ? (
+                        <span className="rounded-full bg-[#FAF7F2] px-2.5 py-1 text-xs text-muted">
+                          {convidado.grupo}
+                        </span>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-3.5">
                       {convidado.emailEnviadoEm ? (
@@ -285,7 +323,7 @@ function ConvidadosContent() {
                           <Check size={13} />
                           {convidado.emailEnviadoEm}
                         </span>
-                      ) : (
+                      ) : convidado.email ? (
                         <button
                           onClick={() => {
                             setSelecionados(new Set([convidado.id]));
@@ -295,6 +333,8 @@ function ConvidadosContent() {
                         >
                           Enviar
                         </button>
+                      ) : (
+                        <span className="text-xs text-muted">Sem e-mail</span>
                       )}
                     </td>
                     <td className="px-3 py-3.5">
@@ -302,26 +342,28 @@ function ConvidadosContent() {
                         {rsvpInfo.label}
                       </span>
                     </td>
+                      <td className="px-3 py-3.5">
+                        <button
+                          onClick={() => copiarLinkDoConvidado(convidado)}
+                          title="Copiar o link individual do convite"
+                          className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-black/5"
+                        >
+                          {copiadoId === convidado.id ? (
+                            <Check size={13} className="text-green-600" />
+                          ) : (
+                            <Copy size={13} />
+                          )}
+                          <span className="hidden sm:inline">
+                            {copiadoId === convidado.id ? "Copiado!" : "Copiar"}
+                          </span>
+                        </button>
+                      </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-white p-5">
-        <div>
-          <p className="text-sm font-semibold text-foreground">Link de RSVP</p>
-          <p className="text-sm text-muted">{LINK_RSVP_MOCK}</p>
-        </div>
-        <button
-          onClick={copiarLink}
-          className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-black/5"
-        >
-          <Copy size={15} />
-          {linkCopiado ? "Copiado!" : "Copiar link"}
-        </button>
       </div>
 
       {modalAdicionar && (
@@ -339,7 +381,8 @@ function ConvidadosContent() {
               : convidados
           }
           onClose={() => setModalEmail(false)}
-          onEnviar={handleEnviarEmails}
+          onEnviar={enviarConvites}
+          onEnviado={() => setSelecionados(new Set())}
         />
       )}
     </div>

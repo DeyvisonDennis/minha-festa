@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppShellSemSidebar } from "@/components/app/AppShellSemSidebar";
-import { useEventoAtivo } from "@/hooks/useEventoAtivo";
+import { useEventoAtivo } from "@/context/EventoContext";
+import { urlCapaSugerida } from "@/lib/opcoes-capa";
 import type { TipoEvento } from "@/lib/tipos-evento";
 import { PassoTipoEvento } from "@/components/onboarding/PassoTipoEvento";
 import { PassoDetalhes, type DetalhesEvento } from "@/components/onboarding/PassoDetalhes";
 import { PassoConfirmar } from "@/components/onboarding/PassoConfirmar";
+import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
+import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { mensagemDeErro } from "@/lib/erros";
 
 type Passo = 1 | 2 | 3;
 
@@ -19,11 +23,21 @@ const PASSOS: { id: Passo; label: string }[] = [
 
 function OnboardingContent() {
   const router = useRouter();
-  const { criarEvento } = useEventoAtivo();
+  const { evento, carregado, erro: erroCarregamento, recarregar, criarEvento } =
+    useEventoAtivo();
 
   const [passo, setPasso] = useState<Passo>(1);
   const [tipo, setTipo] = useState<TipoEvento | null>(null);
   const [detalhes, setDetalhes] = useState<DetalhesEvento | null>(null);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  // Quem já tem um evento não precisa do assistente.
+  useEffect(() => {
+    if (carregado && evento) {
+      router.replace("/dashboard");
+    }
+  }, [carregado, evento, router]);
 
   function handleTipoEscolhido(tipoEscolhido: TipoEvento) {
     setTipo(tipoEscolhido);
@@ -35,20 +49,36 @@ function OnboardingContent() {
     setPasso(3);
   }
 
-  function handleConfirmar() {
+  async function handleConfirmar() {
     if (!tipo || !detalhes) return;
 
-    criarEvento({
-      tipo,
-      nome: detalhes.nome,
-      dataISO: detalhes.dataISO,
-      numConvidados: detalhes.numConvidados,
-      local: detalhes.local,
-      cidade: detalhes.cidade,
-      orcamento: detalhes.orcamento,
-    });
+    setErro(null);
+    setSalvando(true);
 
-    router.push("/dashboard");
+    try {
+      await criarEvento({
+        tipo,
+        nome: detalhes.nome,
+        dataISO: detalhes.dataISO,
+        convidadosEstimados: detalhes.numConvidados,
+        local: detalhes.local,
+        cidade: detalhes.cidade,
+        orcamento: detalhes.orcamento,
+        imagemCapaUrl: urlCapaSugerida(tipo),
+      });
+      router.push("/dashboard");
+    } catch (err) {
+      setErro(mensagemDeErro(err));
+      setSalvando(false);
+    }
+  }
+
+  if (carregado && erroCarregamento) {
+    return <TelaErroConexao onTentarNovamente={recarregar} />;
+  }
+
+  if (!carregado || evento) {
+    return <TelaCarregando />;
   }
 
   return (
@@ -70,11 +100,7 @@ function OnboardingContent() {
                 <div className="flex items-center gap-1.5">
                   <span
                     className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                      p.id < passo
-                        ? "bg-[#3d2b1f] text-white"
-                        : p.id === passo
-                          ? "bg-[#3d2b1f] text-white"
-                          : "bg-border text-muted"
+                      p.id <= passo ? "bg-[#3d2b1f] text-white" : "bg-border text-muted"
                     }`}
                   >
                     {p.id < passo ? "✓" : p.id}
@@ -94,7 +120,7 @@ function OnboardingContent() {
         </div>
       </header>
 
-     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
+      <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
         {passo === 1 && <PassoTipoEvento onContinuar={handleTipoEscolhido} />}
         {passo === 2 && tipo && (
           <PassoDetalhes
@@ -107,6 +133,8 @@ function OnboardingContent() {
           <PassoConfirmar
             tipo={tipo}
             detalhes={detalhes}
+            salvando={salvando}
+            erro={erro}
             onVoltar={() => setPasso(2)}
             onConfirmar={handleConfirmar}
           />

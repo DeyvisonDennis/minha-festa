@@ -1,27 +1,49 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Check } from "lucide-react";
 import { OPCOES_CAPA } from "@/lib/opcoes-capa";
+import { AlertaErro } from "@/components/ui/AlertaErro";
 
 type CapaSelectorModalProps = {
-  capaAtualId: string;
+  capaAtualUrl: string;
   onClose: () => void;
-  onSelecionar: (capaId: string) => void;
+  onSelecionar: (url: string) => Promise<void>;
 };
 
 export function CapaSelectorModal({
-  capaAtualId,
+  capaAtualUrl,
   onClose,
   onSelecionar,
 }: CapaSelectorModalProps) {
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
   }, []);
+
+  async function escolher(url: string) {
+    if (url === capaAtualUrl) {
+      onClose();
+      return;
+    }
+
+    setErro(null);
+    setSalvando(true);
+
+    try {
+      await onSelecionar(url);
+      onClose();
+    } catch {
+      setErro("Não foi possível alterar a capa. Tente novamente.");
+      setSalvando(false);
+    }
+  }
 
   return createPortal(
     <div
@@ -50,17 +72,17 @@ export function CapaSelectorModal({
           </button>
         </div>
 
+        <AlertaErro className="mx-6 mt-4">{erro}</AlertaErro>
+
         <div className="grid max-h-[calc(85vh-88px)] grid-cols-2 gap-3 overflow-y-auto p-6 sm:grid-cols-3">
           {OPCOES_CAPA.map((opcao) => {
-            const selecionada = opcao.id === capaAtualId;
+            const selecionada = opcao.url === capaAtualUrl;
             return (
               <button
                 key={opcao.id}
-                onClick={() => {
-                  onSelecionar(opcao.id);
-                  onClose();
-                }}
-                className={`group relative aspect-video cursor-pointer overflow-hidden rounded-xl border-2 ${
+                onClick={() => escolher(opcao.url)}
+                disabled={salvando}
+                className={`group relative aspect-video cursor-pointer overflow-hidden rounded-xl border-2 disabled:cursor-not-allowed disabled:opacity-60 ${
                   selecionada ? "border-primary" : "border-transparent hover:border-primary/40"
                 }`}
               >

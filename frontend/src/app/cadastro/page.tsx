@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { TermsModal } from "@/components/auth/TermsModal";
 import { TERMOS_DE_USO, POLITICA_DE_PRIVACIDADE } from "@/lib/legal-content";
-import { apiFetch, ApiError, googleAuthUrl } from "@/lib/api";
+import { apiFetch, googleAuthUrl } from "@/lib/api";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useAuth } from "@/context/AuthContext";
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
 
 type ModalAberto = "termos" | "privacidade" | null;
 
@@ -42,11 +44,7 @@ export default function CadastroPage() {
       await recarregar();
       router.push("/dashboard");
     } catch (err) {
-      if (err instanceof ApiError) {
-        setErro(err.message);
-      } else {
-        setErro("Não foi possível conectar ao servidor. Tente novamente.");
-      }
+      setErro(mensagemDeErro(err));
     } finally {
       setCarregando(false);
     }
@@ -136,11 +134,7 @@ export default function CadastroPage() {
           </span>
         </label>
 
-        {erro && (
-          <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700">
-            {erro}
-          </p>
-        )}
+        <AlertaErro>{erro}</AlertaErro>
 
         <button
           type="submit"

@@ -9,6 +9,8 @@ import { TERMOS_DE_USO, POLITICA_DE_PRIVACIDADE } from "@/lib/legal-content";
 import { apiFetch, ApiError, googleAuthUrl } from "@/lib/api";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useAuth } from "@/context/AuthContext";
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
 
 type ModalAberto = "termos" | "privacidade" | null;
 
@@ -36,16 +38,12 @@ export default function LoginPage() {
       await recarregar();
       router.push("/dashboard");
     } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.errorCode === "GOOGLE_ONLY_ACCOUNT") {
+        if (err instanceof ApiError && err.errorCode === "GOOGLE_ONLY_ACCOUNT") {
           setContaGoogle(true);
         } else {
-          setErro(err.message);
+          setErro(mensagemDeErro(err));
         }
-      } else {
-        setErro("Não foi possível conectar ao servidor. Tente novamente.");
-      }
-    } finally {
+      } finally {
       setCarregando(false);
     }
   }
@@ -92,11 +90,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {erro && (
-          <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700">
-            {erro}
-          </p>
-        )}
+        <AlertaErro>{erro}</AlertaErro>
 
         {contaGoogle && (
           <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">

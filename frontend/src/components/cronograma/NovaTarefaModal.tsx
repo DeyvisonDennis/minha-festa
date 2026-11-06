@@ -3,24 +3,15 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
-import type { Prioridade, Tarefa } from "@/lib/mock-cronograma";
-
-const CATEGORIAS_SUGERIDAS = [
-  "Fornecedor", "Catering", "Moda", "Convites", "Financeiro",
-  "Música", "Decoração", "Logística", "Digital",
-];
-
-function hojeISO(): string {
-  const hoje = new Date();
-  return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(
-    hoje.getDate(),
-  ).padStart(2, "0")}`;
-}
+import { CATEGORIAS_TAREFA, type NovaTarefa, type Prioridade } from "@/lib/cronograma";
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
+import { hojeISO } from "@/lib/datas";
 
 type NovaTarefaModalProps = {
   dataInicial?: string;
   onClose: () => void;
-  onAdicionar: (tarefa: Omit<Tarefa, "id">) => void;
+  onAdicionar: (tarefa: NovaTarefa) => Promise<void>;
 };
 
 export function NovaTarefaModal({
@@ -30,9 +21,11 @@ export function NovaTarefaModal({
 }: NovaTarefaModalProps) {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [categoria, setCategoria] = useState(CATEGORIAS_SUGERIDAS[0]);
+  const [categoria, setCategoria] = useState(CATEGORIAS_TAREFA[0]);
   const [prioridade, setPrioridade] = useState<Prioridade>("MEDIA");
   const [data, setData] = useState(dataInicial ?? hojeISO());
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -41,21 +34,20 @@ export function NovaTarefaModal({
     };
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!titulo.trim() || !data) return;
 
-    onAdicionar({
-      titulo,
-      descricao,
-      categoria,
-      prazoISO: data,
-      status: "PENDENTE",
-      prioridade,
-      responsavel: "",
-    });
+    setErro(null);
+    setSalvando(true);
 
-    onClose();
+    try {
+      await onAdicionar({ titulo, descricao, categoria, prazoISO: data, prioridade });
+      onClose();
+    } catch (err) {
+      setErro(mensagemDeErro(err));
+      setSalvando(false);
+    }
   }
 
   return createPortal(
@@ -122,8 +114,10 @@ export function NovaTarefaModal({
                 onChange={(e) => setCategoria(e.target.value)}
                 className="mt-1 w-full cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm outline-none focus:border-primary"
               >
-                {CATEGORIAS_SUGERIDAS.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                {CATEGORIAS_TAREFA.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
             </div>
@@ -142,19 +136,23 @@ export function NovaTarefaModal({
             </div>
           </div>
 
+          <AlertaErro>{erro}</AlertaErro>
+
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 cursor-pointer rounded-lg border border-border py-2.5 text-sm font-medium text-foreground hover:bg-black/5"
+              disabled={salvando}
+              className="flex-1 cursor-pointer rounded-lg border border-border py-2.5 text-sm font-medium text-foreground hover:bg-black/5 disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 cursor-pointer rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover"
+              disabled={salvando}
+              className="flex-1 cursor-pointer rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Adicionar
+              {salvando ? "Salvando..." : "Adicionar"}
             </button>
           </div>
         </form>

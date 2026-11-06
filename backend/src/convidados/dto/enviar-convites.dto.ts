@@ -1,37 +1,30 @@
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
+  ArrayMaxSize,
   ArrayMinSize,
   IsArray,
-  IsEmail,
+  IsNotEmpty,
   IsString,
-  MinLength,
-  ValidateNested,
+  IsUUID,
+  MaxLength,
 } from 'class-validator';
-
-class DestinatarioDto {
-  @IsString()
-  @MinLength(1)
-  nome: string;
-
-  @IsEmail({}, { message: 'E-mail inválido para um dos destinatários.' })
-  email: string;
-}
+import { aparar } from '../../common/aparar';
 
 export class EnviarConvitesDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'Selecione pelo menos um destinatário.' })
-  @ValidateNested({ each: true })
-  @Type(() => DestinatarioDto)
-  destinatarios: DestinatarioDto[];
+  @ArrayMaxSize(500)
+  @IsUUID('all', { each: true })
+  convidadoIds: string[];
 
+  @Transform(aparar)
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty({ message: 'Informe o assunto.' })
+  @MaxLength(200)
   assunto: string;
 
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty({ message: 'Escreva a mensagem.' })
+  @MaxLength(5000)
   mensagem: string;
-
-  @IsString()
-  linkRsvp: string;
 }

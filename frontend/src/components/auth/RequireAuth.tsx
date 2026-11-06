@@ -3,23 +3,25 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { usuario, carregando } = useAuth();
+  const { usuario, carregando, erroConexao, recarregar } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!carregando && !usuario) {
+    if (!carregando && !usuario && !erroConexao) {
       router.replace("/login");
     }
-  }, [carregando, usuario, router]);
+  }, [carregando, usuario, erroConexao, router]);
+
+  if (!carregando && !usuario && erroConexao) {
+    return <TelaErroConexao onTentarNovamente={recarregar} />;
+  }
 
   if (carregando || !usuario) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FAF7F2]">
-        <p className="text-sm text-muted">Carregando...</p>
-      </div>
-    );
+    return <TelaCarregando />;
   }
 
   return <>{children}</>;

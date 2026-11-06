@@ -26,7 +26,7 @@ import {
   formatarDataCurta,
   type StatusTarefa,
   type Tarefa,
-} from "@/lib/mock-cronograma";
+} from "@/lib/cronograma";
 
 const COLUNAS: StatusTarefa[] = ["PENDENTE", "EM_ANDAMENTO", "CONCLUIDA"];
 

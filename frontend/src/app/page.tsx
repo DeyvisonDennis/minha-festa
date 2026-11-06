@@ -3,19 +3,22 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
+import { TelaCarregando } from "@/components/ui/TelaCarregando";
 
 export default function HomePage() {
-  const { usuario, carregando } = useAuth();
+  const { usuario, carregando, erroConexao, recarregar } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (carregando) return;
-    router.replace(usuario ? "/dashboard" : "/login");
-  }, [carregando, usuario, router]);
+    if (usuario) router.replace("/dashboard");
+    else if (!erroConexao) router.replace("/login");
+  }, [carregando, usuario, erroConexao, router]);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-[#FAF7F2]">
-      <p className="text-sm text-muted">Carregando...</p>
-    </div>
-  );
+  if (!carregando && !usuario && erroConexao) {
+    return <TelaErroConexao onTentarNovamente={recarregar} />;
+  }
+
+  return <TelaCarregando />;
 }

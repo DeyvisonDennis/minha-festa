@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
 
 export default function EsqueciSenhaPage() {
   const [email, setEmail] = useState("");
@@ -23,11 +25,7 @@ export default function EsqueciSenhaPage() {
       });
       setEnviado(true);
     } catch (err) {
-      if (err instanceof ApiError) {
-        setErro(err.message);
-      } else {
-        setErro("Não foi possível conectar ao servidor. Tente novamente.");
-      }
+      setErro(mensagemDeErro(err));
     } finally {
       setCarregando(false);
     }
@@ -64,11 +62,7 @@ export default function EsqueciSenhaPage() {
             />
           </div>
 
-          {erro && (
-            <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700">
-              {erro}
-            </p>
-          )}
+          <AlertaErro>{erro}</AlertaErro>
 
           <button
             type="submit"

@@ -1,6 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
+function escaparHtml(texto: string): string {
+  return texto
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 @Injectable()
 export class EmailService {
   private transporter = nodemailer.createTransport({
@@ -20,7 +29,7 @@ export class EmailService {
       subject: 'Redefinição de senha - Minha Festa',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
-          <h2>Olá, ${nome}!</h2>
+          <h2>Olá, ${escaparHtml(nome)}!</h2>
           <p>Recebemos uma solicitação para redefinir a senha da sua conta na Minha Festa.</p>
           <p>Clique no botão abaixo para criar uma nova senha. Este link é válido por 1 hora.</p>
           <p style="text-align: center; margin: 32px 0;">
@@ -41,11 +50,19 @@ export class EmailService {
     mensagemTemplate: string,
     linkRsvp: string,
   ) {
+    // Substitui as variáveis do modelo. Usa funções em vez de texto direto para
+    // que caracteres como "$&" no nome do convidado não sejam interpretados.
     const mensagemPersonalizada = mensagemTemplate
-      .replace(/\{nome\}/g, nome)
-      .replace(/\{link_rsvp\}/g, linkRsvp);
+      .replace(/\{nome\}/g, () => nome)
+      .replace(/\{link_rsvp\}/g, () => linkRsvp);
 
-    const htmlMensagem = mensagemPersonalizada.replace(/\n/g, '<br>');
+    // Nome e mensagem vêm do usuário, então o HTML é escapado primeiro e só
+    // depois o link do RSVP é transformado em link clicável.
+    const linkSeguro = escaparHtml(linkRsvp);
+    const htmlMensagem = escaparHtml(mensagemPersonalizada)
+      .split(linkSeguro)
+      .join(`<a href="${linkSeguro}">${linkSeguro}</a>`)
+      .replace(/\n/g, '<br>');
 
     await this.transporter.sendMail({
       from: process.env.EMAIL_FROM,
