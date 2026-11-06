@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { STATUS_CONFIG, type StatusTarefa, type Tarefa } from "@/lib/mock-cronograma";
+import { STATUS_CONFIG, type NovaTarefa, type StatusTarefa, type Tarefa } from "@/lib/cronograma";
 import { DiaDetalheModal } from "./DiaDetalheModal";
+import { dataLocalISO, formatarDataComSemana } from "@/lib/datas";
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const NOMES_MESES = [
@@ -11,14 +12,10 @@ const NOMES_MESES = [
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
 
-function isoLocal(ano: number, mes: number, dia: number): string {
-  return `${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
-}
-
 type CalendarioViewProps = {
   tarefas: Tarefa[];
   onAlterarStatus: (id: string, status: StatusTarefa) => void;
-  onAdicionarTarefa: (tarefa: Omit<Tarefa, "id">) => void;
+  onAdicionarTarefa: (tarefa: NovaTarefa) => Promise<void>;
 };
 
 export function CalendarioView({
@@ -26,16 +23,15 @@ export function CalendarioView({
   onAlterarStatus,
   onAdicionarTarefa,
 }: CalendarioViewProps) {
-  const [referencia, setReferencia] = useState(() => {
-    const primeira = tarefas[0]?.prazoISO ?? new Date().toISOString();
-    const [ano, mes] = primeira.split("-").map(Number);
-    return new Date(ano, mes - 1, 1);
+   const [referencia, setReferencia] = useState(() => {
+    const hoje = new Date();
+    return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   });
   const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
 
   const hojeISO = useMemo(() => {
     const hoje = new Date();
-    return isoLocal(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+    return dataLocalISO(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
   }, []);
 
   const tarefasPorDia = useMemo(() => {
@@ -58,24 +54,13 @@ export function CalendarioView({
     const lista: Array<{ dia: number; iso: string } | null> = [];
     for (let i = 0; i < primeiroDiaSemana; i++) lista.push(null);
     for (let dia = 1; dia <= totalDias; dia++) {
-      lista.push({ dia, iso: isoLocal(ano, mes, dia) });
+      lista.push({ dia, iso: dataLocalISO(ano, mes, dia) });
     }
     return lista;
   }, [ano, mes]);
 
   function mudarMes(delta: number) {
     setReferencia(new Date(ano, mes + delta, 1));
-  }
-
-  function formatarDataCompleta(iso: string): string {
-    const [y, m, d] = iso.split("-").map(Number);
-    const data = new Date(y, m - 1, d);
-    const texto = data.toLocaleDateString("pt-BR", {
-      weekday: "long",
-      day: "2-digit",
-      month: "long",
-    });
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 
   const tarefasDoDiaSelecionado = diaSelecionado
@@ -98,11 +83,11 @@ export function CalendarioView({
         </p>
 
         <button
-          onClick={() => mudarMes(-1)}
+          onClick={() => mudarMes(1)}
           className="flex cursor-pointer items-center gap-1 rounded-lg border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-black/5 sm:px-3 sm:text-sm"
         >
-          <ChevronLeft size={15} />
-          <span className="hidden min-[420px]:inline">{NOMES_MESES[(mes + 11) % 12]}</span>
+          <span className="hidden min-[420px]:inline">{NOMES_MESES[(mes + 1) % 12]}</span>
+          <ChevronRight size={15} />
         </button>
       </div>
 
@@ -163,7 +148,7 @@ export function CalendarioView({
       {diaSelecionado && (
         <DiaDetalheModal
           dataISO={diaSelecionado}
-          dataFormatada={formatarDataCompleta(diaSelecionado)}
+          dataFormatada={formatarDataComSemana(diaSelecionado)}
           tarefas={tarefasDoDiaSelecionado}
           onClose={() => setDiaSelecionado(null)}
           onAlterarStatus={onAlterarStatus}

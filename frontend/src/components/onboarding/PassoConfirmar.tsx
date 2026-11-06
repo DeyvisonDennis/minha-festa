@@ -3,27 +3,23 @@
 import { ArrowLeft, PartyPopper, FileText, Users, CalendarClock } from "lucide-react";
 import { TIPO_EVENTO_CONFIG, type TipoEvento } from "@/lib/tipos-evento";
 import type { DetalhesEvento } from "./PassoDetalhes";
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { formatarDataExtensa } from "@/lib/datas";
 
 type PassoConfirmarProps = {
   tipo: TipoEvento;
   detalhes: DetalhesEvento;
+  salvando: boolean;
+  erro: string | null;
   onVoltar: () => void;
   onConfirmar: () => void;
 };
 
-function formatarDataExtensa(iso: string): string {
-  const [ano, mes, dia] = iso.split("-").map(Number);
-  const data = new Date(ano, mes - 1, dia);
-  return data.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-}
-
 export function PassoConfirmar({
   tipo,
   detalhes,
+  salvando,
+  erro,
   onVoltar,
   onConfirmar,
 }: PassoConfirmarProps) {
@@ -91,12 +87,15 @@ export function PassoConfirmar({
         </div>
       </div>
 
+      <AlertaErro className="mt-6">{erro}</AlertaErro>
+
       <button
         onClick={onConfirmar}
-        className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-white hover:bg-primary-hover"
+        disabled={salvando}
+        className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         <PartyPopper size={16} />
-        Criar meu evento e acessar o painel
+        {salvando ? "Criando evento..." : "Criar meu evento e acessar o painel"}
       </button>
     </div>
   );

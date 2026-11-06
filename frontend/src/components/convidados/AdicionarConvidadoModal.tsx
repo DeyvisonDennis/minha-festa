@@ -2,34 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useEventoAtivo } from "@/context/EventoContext";
+import { GRUPOS_POR_TIPO, type NovoConvidado } from "@/lib/convidados";
 import { formatarTelefone } from "@/lib/format";
-
-const GRUPOS_SUGERIDOS = [
-  "Família noivo",
-  "Família noiva",
-  "Amigos noivo",
-  "Amigos noiva",
-  "Colegas trabalho",
-];
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
 
 type AdicionarConvidadoModalProps = {
   onClose: () => void;
-  onAdicionar: (dados: {
-    nome: string;
-    email: string;
-    telefone: string;
-    grupo: string;
-  }) => void;
+  onAdicionar: (dados: NovoConvidado) => Promise<void>;
 };
 
 export function AdicionarConvidadoModal({
   onClose,
   onAdicionar,
 }: AdicionarConvidadoModalProps) {
+  const { evento } = useEventoAtivo();
+  const grupos = GRUPOS_POR_TIPO[evento?.tipo ?? "OUTRO"];
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [grupo, setGrupo] = useState(GRUPOS_SUGERIDOS[0]);
+  const [grupo, setGrupo] = useState(grupos[0]);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -38,10 +34,19 @@ export function AdicionarConvidadoModal({
     };
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nome.trim()) return;
-    onAdicionar({ nome, email, telefone, grupo });
+
+    setErro(null);
+    setSalvando(true);
+
+    try {
+      await onAdicionar({ nome, email, telefone, grupo });
+    } catch (err) {
+      setErro(mensagemDeErro(err));
+      setSalvando(false);
+    }
   }
 
   return createPortal(
@@ -53,9 +58,7 @@ export function AdicionarConvidadoModal({
         className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-serif text-xl font-bold text-foreground">
-          Adicionar convidado
-        </h2>
+        <h2 className="font-serif text-xl font-bold text-foreground">Adicionar convidado</h2>
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
@@ -63,6 +66,7 @@ export function AdicionarConvidadoModal({
             <input
               type="text"
               required
+              autoFocus
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Nome completo"
@@ -99,7 +103,7 @@ export function AdicionarConvidadoModal({
               onChange={(e) => setGrupo(e.target.value)}
               className="mt-1 w-full cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm outline-none focus:border-primary"
             >
-              {GRUPOS_SUGERIDOS.map((g) => (
+              {grupos.map((g) => (
                 <option key={g} value={g}>
                   {g}
                 </option>
@@ -107,19 +111,23 @@ export function AdicionarConvidadoModal({
             </select>
           </div>
 
+          <AlertaErro>{erro}</AlertaErro>
+
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 cursor-pointer rounded-lg border border-border py-2.5 text-sm font-medium text-foreground hover:bg-black/5"
+              disabled={salvando}
+              className="flex-1 cursor-pointer rounded-lg border border-border py-2.5 text-sm font-medium text-foreground hover:bg-black/5 disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 cursor-pointer rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover"
+              disabled={salvando}
+              className="flex-1 cursor-pointer rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Adicionar
+              {salvando ? "Salvando..." : "Adicionar"}
             </button>
           </div>
         </form>

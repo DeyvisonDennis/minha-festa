@@ -63,3 +63,7 @@ export const CAPA_SUGERIDA_POR_TIPO: Record<TipoEvento, string> = {
 export function obterUrlCapa(id: string): string {
   return OPCOES_CAPA.find((o) => o.id === id)?.url ?? OPCOES_CAPA[0].url;
 }
+
+export function urlCapaSugerida(tipo: TipoEvento): string {
+  return obterUrlCapa(CAPA_SUGERIDA_POR_TIPO[tipo]);
+}

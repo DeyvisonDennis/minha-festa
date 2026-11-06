@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { STATUS_CONFIG, type StatusTarefa } from "@/lib/mock-cronograma";
+import { STATUS_CONFIG, type StatusTarefa } from "@/lib/cronograma";
 
 const OPCOES: StatusTarefa[] = ["PENDENTE", "EM_ANDAMENTO", "CONCLUIDA", "CANCELADA"];
 

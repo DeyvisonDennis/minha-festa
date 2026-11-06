@@ -4,8 +4,10 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { AlertaErro } from "@/components/ui/AlertaErro";
+import { mensagemDeErro } from "@/lib/erros";
 
 function RedefinirSenhaForm() {
   const router = useRouter();
@@ -34,11 +36,7 @@ function RedefinirSenhaForm() {
       });
       setSucesso(true);
     } catch (err) {
-      if (err instanceof ApiError) {
-        setErro(err.message);
-      } else {
-        setErro("Não foi possível conectar ao servidor. Tente novamente.");
-      }
+      setErro(mensagemDeErro(err));
     } finally {
       setCarregando(false);
     }
@@ -46,14 +44,13 @@ function RedefinirSenhaForm() {
 
   if (!token) {
     return (
-      <div className="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-        Este link é inválido ou está incompleto. Solicite uma nova
-        redefinição na tela de{" "}
-        <Link href="/esqueci-senha" className="underline">
-          esqueci minha senha
-        </Link>
-        .
-      </div>
+        <AlertaErro className="mt-6">
+          Este link é inválido ou está incompleto. Solicite uma nova redefinição na tela de{" "}
+          <Link href="/esqueci-senha" className="underline">
+            esqueci minha senha
+          </Link>
+          .
+        </AlertaErro>
     );
   }
 
@@ -90,11 +87,7 @@ function RedefinirSenhaForm() {
         <p className="mt-1 text-xs text-muted">Pelo menos 8 caracteres</p>
       </div>
 
-      {erro && (
-        <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700">
-          {erro}
-        </p>
-      )}
+      <AlertaErro>{erro}</AlertaErro>
 
       <button
         type="submit"

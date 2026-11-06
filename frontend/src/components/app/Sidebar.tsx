@@ -4,30 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutGrid, CalendarClock, Users } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useEventoAtivo } from "@/hooks/useEventoAtivo";
+import { useEventoAtivo } from "@/context/EventoContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { calcularDiasRestantes, formatarDataResumida } from "@/lib/datas";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/cronograma", label: "Cronograma", icon: CalendarClock },
   { href: "/convidados", label: "Convidados", icon: Users },
 ];
-
-function calcularDiasRestantes(dataISO: string): number {
-  const [ano, mes, dia] = dataISO.split("-").map(Number);
-  const dataEvento = new Date(ano, mes - 1, dia);
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  const diffMs = dataEvento.getTime() - hoje.getTime();
-  return Math.round(diffMs / (1000 * 60 * 60 * 24));
-}
-
-function formatarDataCurta(dataISO: string): string {
-  const [ano, mes, dia] = dataISO.split("-").map(Number);
-  const data = new Date(ano, mes - 1, dia);
-  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
-}
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -69,7 +55,7 @@ export function Sidebar() {
             {evento.nome}
           </p>
           <p className="mt-0.5 text-xs text-muted">
-            {formatarDataCurta(evento.dataISO)} · {calcularDiasRestantes(evento.dataISO)} dias
+            {formatarDataResumida(evento.dataISO)} · {calcularDiasRestantes(evento.dataISO)} dias
           </p>
         </div>
       )}

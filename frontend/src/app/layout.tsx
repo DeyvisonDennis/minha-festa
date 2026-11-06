@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lora, Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
+import { EventoProvider } from "@/context/EventoContext";
 import "./globals.css";
 
 const lora = Lora({
@@ -24,8 +25,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${lora.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#FAF7F2] text-[#2B1B12]">
-        <AuthProvider>{children}</AuthProvider>
+      <body 
+        suppressHydrationWarning
+        className="min-h-full flex flex-col font-sans bg-[#FAF7F2] text-[#2B1B12]">
+        <AuthProvider>
+          <EventoProvider>
+            {children}
+          </EventoProvider>
+        </AuthProvider>
       </body>
     </html>
   );

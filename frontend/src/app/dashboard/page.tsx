@@ -3,18 +3,18 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, ArrowRight, CalendarClock, Users, Camera, Clock } from "lucide-react";
+import { Sparkles, ArrowRight, CalendarClock, Users, Camera } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { useAuth } from "@/context/AuthContext";
-import { useEventoAtivo } from "@/hooks/useEventoAtivo";
+import { useEventoAtivo } from "@/context/EventoContext";
 import { useTarefasCronograma } from "@/hooks/useTarefasCronograma";
 import { useConvidados } from "@/hooks/useConvidados";
 import { TIPO_EVENTO_CONFIG } from "@/lib/tipos-evento";
-import { obterUrlCapa } from "@/lib/opcoes-capa";
 import { formatarMoeda } from "@/lib/moeda";
-import { formatarDataCurta } from "@/lib/mock-cronograma";
-import { RSVP_CONFIG } from "@/lib/mock-convidados";
+import { formatarDataCurta } from "@/lib/cronograma";
+import { RSVP_CONFIG } from "@/lib/convidados";
 import { CapaSelectorModal } from "@/components/dashboard/CapaSelectorModal";
+import { calcularDiasRestantes, formatarDataExtensa } from "@/lib/datas";
 
 function saudacao() {
   const hora = new Date().getHours();
@@ -34,20 +34,6 @@ function dataDeHoje() {
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
-function calcularDiasRestantes(dataISO: string): number {
-  const [ano, mes, dia] = dataISO.split("-").map(Number);
-  const dataEvento = new Date(ano, mes - 1, dia);
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  const diffMs = dataEvento.getTime() - hoje.getTime();
-  return Math.max(0, Math.round(diffMs / (1000 * 60 * 60 * 24)));
-}
-
-function formatarDataExtensa(dataISO: string): string {
-  const [ano, mes, dia] = dataISO.split("-").map(Number);
-  const data = new Date(ano, mes - 1, dia);
-  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
-}
 
 function StatCard({
   label,
@@ -84,8 +70,8 @@ function StatCard({
 function DashboardContent() {
   const { usuario } = useAuth();
   const { evento, alterarCapa } = useEventoAtivo();
-  const { tarefas } = useTarefasCronograma();
-  const { convidados } = useConvidados();
+  const { tarefas, carregando: carregandoTarefas } = useTarefasCronograma();
+  const { convidados, carregando: carregandoConvidados } = useConvidados();
   const [modalCapaAberto, setModalCapaAberto] = useState(false);
 
   const primeiroNome = usuario?.nome?.split(" ")[0] ?? "";
@@ -139,7 +125,7 @@ function DashboardContent() {
       </div>
 
       <div className="relative overflow-hidden rounded-2xl px-5 py-6 text-white sm:px-8 sm:py-8">
-        <Image src={obterUrlCapa(evento.capaId)} alt="" fill className="object-cover" />
+        <Image src={evento.imagemCapaUrl} alt="" fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
 
         <button
@@ -166,7 +152,7 @@ function DashboardContent() {
             </div>
             <div>
               <p className="font-serif text-2xl font-bold">
-                {evento.orcamento !== undefined ? formatarMoeda(evento.orcamento) : "—"}
+                {evento.orcamento > 0 ? formatarMoeda(evento.orcamento) : "—"}
               </p>
               <p className="text-xs text-white/70">Orçamento</p>
             </div>
@@ -190,11 +176,11 @@ function DashboardContent() {
           label="Orçamento utilizado"
           valor={formatarMoeda(0)}
           meta={
-            evento.orcamento !== undefined
+            evento.orcamento > 0
               ? `de ${formatarMoeda(evento.orcamento)}`
               : "Nenhum orçamento definido"
           }
-          progresso={evento.orcamento !== undefined ? 0 : null}
+          progresso={evento.orcamento > 0 ? 0 : null}
           cor="bg-[#c98a3e]"
         />
         <StatCard
@@ -230,7 +216,15 @@ function DashboardContent() {
           </div>
 
           <div className="mt-4 space-y-1">
-            {proximasTarefas.length === 0 && (
+            {carregandoTarefas && (
+              <p className="py-6 text-center text-sm text-muted">Carregando...</p>
+            )}
+            {!carregandoTarefas && tarefas.length === 0 && (
+              <p className="py-6 text-center text-sm text-muted">
+                Nenhuma tarefa cadastrada ainda. Crie a primeira no cronograma.
+              </p>
+            )}
+            {!carregandoTarefas && tarefas.length > 0 && proximasTarefas.length === 0 && (
               <p className="py-6 text-center text-sm text-muted">
                 Nenhuma tarefa pendente. 🎉
               </p>
@@ -270,7 +264,10 @@ function DashboardContent() {
           </div>
 
           <div className="mt-4 space-y-1">
-            {rsvpsRecentes.length === 0 && (
+            {carregandoConvidados && (
+              <p className="py-6 text-center text-sm text-muted">Carregando...</p>
+            )}
+            {!carregandoConvidados && rsvpsRecentes.length === 0 && (
               <p className="py-6 text-center text-sm text-muted">
                 Nenhum convidado cadastrado ainda.
               </p>
@@ -343,7 +340,7 @@ function DashboardContent() {
 
       {modalCapaAberto && (
         <CapaSelectorModal
-          capaAtualId={evento.capaId}
+          capaAtualUrl={evento.imagemCapaUrl}
           onClose={() => setModalCapaAberto(false)}
           onSelecionar={alterarCapa}
         />

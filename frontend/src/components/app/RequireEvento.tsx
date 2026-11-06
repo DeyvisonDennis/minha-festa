@@ -2,24 +2,31 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useEventoAtivo } from "@/hooks/useEventoAtivo";
+import { useEventoAtivo } from "@/context/EventoContext";
+import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
 
 export function RequireEvento({ children }: { children: React.ReactNode }) {
-  const { evento, carregado } = useEventoAtivo();
+  const { evento, carregado, erro, recarregar } = useEventoAtivo();
   const router = useRouter();
 
   useEffect(() => {
-    if (carregado && !evento) {
+    if (carregado && !erro && !evento) {
       router.replace("/onboarding");
     }
-  }, [carregado, evento, router]);
+  }, [carregado, erro, evento, router]);
+
+  if (carregado && erro) {
+    return (
+      <TelaErroConexao
+        mensagem="Não foi possível carregar os dados do seu evento."
+        onTentarNovamente={recarregar}
+      />
+    );
+  }
 
   if (!carregado || !evento) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FAF7F2]">
-        <p className="text-sm text-muted">Carregando...</p>
-      </div>
-    );
+    return <TelaCarregando />;
   }
 
   return <>{children}</>;

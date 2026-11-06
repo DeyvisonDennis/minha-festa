@@ -3,12 +3,11 @@
 import { useMemo, useState } from "react";
 import { Search, Calendar as CalendarIcon } from "lucide-react";
 import {
-  STATUS_CONFIG,
   PRIORIDADE_COR,
   formatarDataCurta,
   type StatusTarefa,
   type Tarefa,
-} from "@/lib/mock-cronograma";
+} from "@/lib/cronograma";
 import { StatusSelect } from "./StatusSelect";
 import { normalizarTexto } from "@/lib/normalizar-texto";
 
