@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict WbVYsYvirIalD4qKVBK12YK6mrYHKC0MaZPSz5yXCXUGjJAKPKgJmv0O2RXJtjw
+\restrict AaQr3NfaHUoOJrLNe0njYMfp8c1HxTbyf7KldE7Jy5vyvIXtEhffHjL9DhD926h
 
 -- Dumped from database version 17.8
 -- Dumped by pg_dump version 18.2
 
--- Started on 2026-09-22 22:25:28
+-- Started on 2026-11-05 14:47:48
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -30,9 +30,9 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 
 
 --
--- TOC entry 5477 (class 0 OID 0)
+-- TOC entry 5479 (class 0 OID 0)
 -- Dependencies: 2
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
@@ -47,9 +47,9 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
 
 --
--- TOC entry 5478 (class 0 OID 0)
+-- TOC entry 5480 (class 0 OID 0)
 -- Dependencies: 3
--- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
 --
 
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
@@ -57,7 +57,7 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 --
 -- TOC entry 962 (class 1247 OID 16789)
--- Name: perfil_usuario; Type: TYPE; Schema: public; Owner: postgres
+-- Name: perfil_usuario; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.perfil_usuario AS ENUM (
@@ -67,11 +67,9 @@ CREATE TYPE public.perfil_usuario AS ENUM (
 );
 
 
-ALTER TYPE public.perfil_usuario OWNER TO postgres;
-
 --
 -- TOC entry 965 (class 1247 OID 16796)
--- Name: status_assinatura; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_assinatura; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_assinatura AS ENUM (
@@ -83,11 +81,9 @@ CREATE TYPE public.status_assinatura AS ENUM (
 );
 
 
-ALTER TYPE public.status_assinatura OWNER TO postgres;
-
 --
 -- TOC entry 968 (class 1247 OID 16808)
--- Name: status_contribuicao; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_contribuicao; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_contribuicao AS ENUM (
@@ -98,11 +94,9 @@ CREATE TYPE public.status_contribuicao AS ENUM (
 );
 
 
-ALTER TYPE public.status_contribuicao OWNER TO postgres;
-
 --
 -- TOC entry 971 (class 1247 OID 16818)
--- Name: status_fornecedor; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_fornecedor; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_fornecedor AS ENUM (
@@ -113,11 +107,9 @@ CREATE TYPE public.status_fornecedor AS ENUM (
 );
 
 
-ALTER TYPE public.status_fornecedor OWNER TO postgres;
-
 --
 -- TOC entry 974 (class 1247 OID 16828)
--- Name: status_orcamento; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_orcamento; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_orcamento AS ENUM (
@@ -130,11 +122,9 @@ CREATE TYPE public.status_orcamento AS ENUM (
 );
 
 
-ALTER TYPE public.status_orcamento OWNER TO postgres;
-
 --
 -- TOC entry 977 (class 1247 OID 16842)
--- Name: status_pagamento; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_pagamento; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_pagamento AS ENUM (
@@ -146,11 +136,9 @@ CREATE TYPE public.status_pagamento AS ENUM (
 );
 
 
-ALTER TYPE public.status_pagamento OWNER TO postgres;
-
 --
 -- TOC entry 980 (class 1247 OID 16854)
--- Name: status_rsvp; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_rsvp; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_rsvp AS ENUM (
@@ -160,11 +148,9 @@ CREATE TYPE public.status_rsvp AS ENUM (
 );
 
 
-ALTER TYPE public.status_rsvp OWNER TO postgres;
-
 --
 -- TOC entry 983 (class 1247 OID 16862)
--- Name: status_solicitacao_lgpd; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_solicitacao_lgpd; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_solicitacao_lgpd AS ENUM (
@@ -176,11 +162,9 @@ CREATE TYPE public.status_solicitacao_lgpd AS ENUM (
 );
 
 
-ALTER TYPE public.status_solicitacao_lgpd OWNER TO postgres;
-
 --
 -- TOC entry 986 (class 1247 OID 16874)
--- Name: status_tarefa; Type: TYPE; Schema: public; Owner: postgres
+-- Name: status_tarefa; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.status_tarefa AS ENUM (
@@ -191,11 +175,9 @@ CREATE TYPE public.status_tarefa AS ENUM (
 );
 
 
-ALTER TYPE public.status_tarefa OWNER TO postgres;
-
 --
 -- TOC entry 989 (class 1247 OID 16884)
--- Name: tipo_consentimento; Type: TYPE; Schema: public; Owner: postgres
+-- Name: tipo_consentimento; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.tipo_consentimento AS ENUM (
@@ -205,11 +187,9 @@ CREATE TYPE public.tipo_consentimento AS ENUM (
 );
 
 
-ALTER TYPE public.tipo_consentimento OWNER TO postgres;
-
 --
 -- TOC entry 992 (class 1247 OID 16892)
--- Name: tipo_presente; Type: TYPE; Schema: public; Owner: postgres
+-- Name: tipo_presente; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.tipo_presente AS ENUM (
@@ -218,11 +198,9 @@ CREATE TYPE public.tipo_presente AS ENUM (
 );
 
 
-ALTER TYPE public.tipo_presente OWNER TO postgres;
-
 --
 -- TOC entry 995 (class 1247 OID 16898)
--- Name: tipo_solicitacao_lgpd; Type: TYPE; Schema: public; Owner: postgres
+-- Name: tipo_solicitacao_lgpd; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.tipo_solicitacao_lgpd AS ENUM (
@@ -233,11 +211,9 @@ CREATE TYPE public.tipo_solicitacao_lgpd AS ENUM (
 );
 
 
-ALTER TYPE public.tipo_solicitacao_lgpd OWNER TO postgres;
-
 --
 -- TOC entry 262 (class 1255 OID 16907)
--- Name: atualizar_media_fornecedor(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: atualizar_media_fornecedor(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.atualizar_media_fornecedor() RETURNS trigger
@@ -263,11 +239,9 @@ END;
 $$;
 
 
-ALTER FUNCTION public.atualizar_media_fornecedor() OWNER TO postgres;
-
 --
 -- TOC entry 280 (class 1255 OID 16908)
--- Name: atualizar_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: atualizar_updated_at(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.atualizar_updated_at() RETURNS trigger
@@ -280,11 +254,9 @@ END;
 $$;
 
 
-ALTER FUNCTION public.atualizar_updated_at() OWNER TO postgres;
-
 --
 -- TOC entry 325 (class 1255 OID 16909)
--- Name: fornecedor_pode_aparecer_vitrine(uuid); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: fornecedor_pode_aparecer_vitrine(uuid); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.fornecedor_pode_aparecer_vitrine(p_fornecedor_id uuid) RETURNS boolean
@@ -314,15 +286,13 @@ END;
 $$;
 
 
-ALTER FUNCTION public.fornecedor_pode_aparecer_vitrine(p_fornecedor_id uuid) OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
 -- TOC entry 219 (class 1259 OID 16910)
--- Name: assinaturas_fornecedor; Type: TABLE; Schema: public; Owner: postgres
+-- Name: assinaturas_fornecedor; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.assinaturas_fornecedor (
@@ -343,11 +313,9 @@ CREATE TABLE public.assinaturas_fornecedor (
 );
 
 
-ALTER TABLE public.assinaturas_fornecedor OWNER TO postgres;
-
 --
 -- TOC entry 220 (class 1259 OID 16920)
--- Name: avaliacoes_fornecedores; Type: TABLE; Schema: public; Owner: postgres
+-- Name: avaliacoes_fornecedores; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.avaliacoes_fornecedores (
@@ -362,11 +330,9 @@ CREATE TABLE public.avaliacoes_fornecedores (
 );
 
 
-ALTER TABLE public.avaliacoes_fornecedores OWNER TO postgres;
-
 --
 -- TOC entry 221 (class 1259 OID 16928)
--- Name: blocos_site_evento; Type: TABLE; Schema: public; Owner: postgres
+-- Name: blocos_site_evento; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.blocos_site_evento (
@@ -382,11 +348,9 @@ CREATE TABLE public.blocos_site_evento (
 );
 
 
-ALTER TABLE public.blocos_site_evento OWNER TO postgres;
-
 --
 -- TOC entry 222 (class 1259 OID 16939)
--- Name: categorias_fornecedores; Type: TABLE; Schema: public; Owner: postgres
+-- Name: categorias_fornecedores; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.categorias_fornecedores (
@@ -399,11 +363,9 @@ CREATE TABLE public.categorias_fornecedores (
 );
 
 
-ALTER TABLE public.categorias_fornecedores OWNER TO postgres;
-
 --
 -- TOC entry 223 (class 1259 OID 16948)
--- Name: consentimentos_lgpd; Type: TABLE; Schema: public; Owner: postgres
+-- Name: consentimentos_lgpd; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.consentimentos_lgpd (
@@ -417,11 +379,9 @@ CREATE TABLE public.consentimentos_lgpd (
 );
 
 
-ALTER TABLE public.consentimentos_lgpd OWNER TO postgres;
-
 --
 -- TOC entry 224 (class 1259 OID 16955)
--- Name: contribuicoes_presentes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: contribuicoes_presentes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.contribuicoes_presentes (
@@ -439,11 +399,9 @@ CREATE TABLE public.contribuicoes_presentes (
 );
 
 
-ALTER TABLE public.contribuicoes_presentes OWNER TO postgres;
-
 --
 -- TOC entry 225 (class 1259 OID 16964)
--- Name: convidados; Type: TABLE; Schema: public; Owner: postgres
+-- Name: convidados; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.convidados (
@@ -465,11 +423,9 @@ CREATE TABLE public.convidados (
 );
 
 
-ALTER TABLE public.convidados OWNER TO postgres;
-
 --
 -- TOC entry 226 (class 1259 OID 16975)
--- Name: convites; Type: TABLE; Schema: public; Owner: postgres
+-- Name: convites; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.convites (
@@ -490,11 +446,9 @@ CREATE TABLE public.convites (
 );
 
 
-ALTER TABLE public.convites OWNER TO postgres;
-
 --
 -- TOC entry 227 (class 1259 OID 16988)
--- Name: eventos; Type: TABLE; Schema: public; Owner: postgres
+-- Name: eventos; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.eventos (
@@ -515,16 +469,16 @@ CREATE TABLE public.eventos (
     publico boolean DEFAULT false NOT NULL,
     criado_em timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    convidados_estimados integer,
+    CONSTRAINT chk_evento_convidados_estimados CHECK (((convidados_estimados IS NULL) OR (convidados_estimados >= 0))),
     CONSTRAINT chk_evento_estado CHECK (((estado IS NULL) OR (estado ~ '^[A-Z]{2}$'::text))),
     CONSTRAINT chk_evento_orcamento CHECK ((orcamento_total >= (0)::numeric))
 );
 
 
-ALTER TABLE public.eventos OWNER TO postgres;
-
 --
 -- TOC entry 228 (class 1259 OID 17000)
--- Name: fornecedores; Type: TABLE; Schema: public; Owner: postgres
+-- Name: fornecedores; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.fornecedores (
@@ -558,11 +512,9 @@ CREATE TABLE public.fornecedores (
 );
 
 
-ALTER TABLE public.fornecedores OWNER TO postgres;
-
 --
 -- TOC entry 229 (class 1259 OID 17015)
--- Name: logs_auditoria; Type: TABLE; Schema: public; Owner: postgres
+-- Name: logs_auditoria; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.logs_auditoria (
@@ -579,11 +531,9 @@ CREATE TABLE public.logs_auditoria (
 );
 
 
-ALTER TABLE public.logs_auditoria OWNER TO postgres;
-
 --
 -- TOC entry 230 (class 1259 OID 17022)
--- Name: notificacoes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: notificacoes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.notificacoes (
@@ -598,11 +548,9 @@ CREATE TABLE public.notificacoes (
 );
 
 
-ALTER TABLE public.notificacoes OWNER TO postgres;
-
 --
 -- TOC entry 231 (class 1259 OID 17030)
--- Name: orcamentos; Type: TABLE; Schema: public; Owner: postgres
+-- Name: orcamentos; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.orcamentos (
@@ -623,11 +571,9 @@ CREATE TABLE public.orcamentos (
 );
 
 
-ALTER TABLE public.orcamentos OWNER TO postgres;
-
 --
 -- TOC entry 232 (class 1259 OID 17041)
--- Name: orcamentos_categorias; Type: TABLE; Schema: public; Owner: postgres
+-- Name: orcamentos_categorias; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.orcamentos_categorias (
@@ -642,11 +588,9 @@ CREATE TABLE public.orcamentos_categorias (
 );
 
 
-ALTER TABLE public.orcamentos_categorias OWNER TO postgres;
-
 --
 -- TOC entry 233 (class 1259 OID 17049)
--- Name: pagamentos_fornecedor; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pagamentos_fornecedor; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.pagamentos_fornecedor (
@@ -666,11 +610,9 @@ CREATE TABLE public.pagamentos_fornecedor (
 );
 
 
-ALTER TABLE public.pagamentos_fornecedor OWNER TO postgres;
-
 --
 -- TOC entry 234 (class 1259 OID 17059)
--- Name: pix_configuracoes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pix_configuracoes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.pix_configuracoes (
@@ -684,11 +626,9 @@ CREATE TABLE public.pix_configuracoes (
 );
 
 
-ALTER TABLE public.pix_configuracoes OWNER TO postgres;
-
 --
 -- TOC entry 235 (class 1259 OID 17067)
--- Name: portfolio_fornecedor; Type: TABLE; Schema: public; Owner: postgres
+-- Name: portfolio_fornecedor; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.portfolio_fornecedor (
@@ -703,11 +643,9 @@ CREATE TABLE public.portfolio_fornecedor (
 );
 
 
-ALTER TABLE public.portfolio_fornecedor OWNER TO postgres;
-
 --
 -- TOC entry 236 (class 1259 OID 17076)
--- Name: presentes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: presentes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.presentes (
@@ -729,11 +667,9 @@ CREATE TABLE public.presentes (
 );
 
 
-ALTER TABLE public.presentes OWNER TO postgres;
-
 --
 -- TOC entry 237 (class 1259 OID 17090)
--- Name: save_the_date; Type: TABLE; Schema: public; Owner: postgres
+-- Name: save_the_date; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.save_the_date (
@@ -751,11 +687,9 @@ CREATE TABLE public.save_the_date (
 );
 
 
-ALTER TABLE public.save_the_date OWNER TO postgres;
-
 --
 -- TOC entry 238 (class 1259 OID 17100)
--- Name: sessoes_usuario; Type: TABLE; Schema: public; Owner: postgres
+-- Name: sessoes_usuario; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.sessoes_usuario (
@@ -770,11 +704,9 @@ CREATE TABLE public.sessoes_usuario (
 );
 
 
-ALTER TABLE public.sessoes_usuario OWNER TO postgres;
-
 --
 -- TOC entry 239 (class 1259 OID 17107)
--- Name: sites_evento; Type: TABLE; Schema: public; Owner: postgres
+-- Name: sites_evento; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.sites_evento (
@@ -790,11 +722,9 @@ CREATE TABLE public.sites_evento (
 );
 
 
-ALTER TABLE public.sites_evento OWNER TO postgres;
-
 --
 -- TOC entry 240 (class 1259 OID 17116)
--- Name: solicitacoes_lgpd; Type: TABLE; Schema: public; Owner: postgres
+-- Name: solicitacoes_lgpd; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.solicitacoes_lgpd (
@@ -811,11 +741,9 @@ CREATE TABLE public.solicitacoes_lgpd (
 );
 
 
-ALTER TABLE public.solicitacoes_lgpd OWNER TO postgres;
-
 --
 -- TOC entry 241 (class 1259 OID 17125)
--- Name: tarefas; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tarefas; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.tarefas (
@@ -830,15 +758,15 @@ CREATE TABLE public.tarefas (
     prioridade integer DEFAULT 0 NOT NULL,
     concluida_em timestamp with time zone,
     criado_em timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    categoria character varying(100),
+    ordem integer DEFAULT 0 NOT NULL
 );
 
 
-ALTER TABLE public.tarefas OWNER TO postgres;
-
 --
 -- TOC entry 242 (class 1259 OID 17135)
--- Name: tokens_confirmacao_email; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tokens_confirmacao_email; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.tokens_confirmacao_email (
@@ -851,11 +779,9 @@ CREATE TABLE public.tokens_confirmacao_email (
 );
 
 
-ALTER TABLE public.tokens_confirmacao_email OWNER TO postgres;
-
 --
 -- TOC entry 243 (class 1259 OID 17140)
--- Name: tokens_recuperacao_senha; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tokens_recuperacao_senha; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.tokens_recuperacao_senha (
@@ -868,11 +794,9 @@ CREATE TABLE public.tokens_recuperacao_senha (
 );
 
 
-ALTER TABLE public.tokens_recuperacao_senha OWNER TO postgres;
-
 --
 -- TOC entry 244 (class 1259 OID 17145)
--- Name: usuarios; Type: TABLE; Schema: public; Owner: postgres
+-- Name: usuarios; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.usuarios (
@@ -897,11 +821,9 @@ CREATE TABLE public.usuarios (
 );
 
 
-ALTER TABLE public.usuarios OWNER TO postgres;
-
 --
 -- TOC entry 245 (class 1259 OID 17159)
--- Name: vw_dashboard_evento; Type: VIEW; Schema: public; Owner: postgres
+-- Name: vw_dashboard_evento; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.vw_dashboard_evento AS
@@ -920,11 +842,9 @@ CREATE VIEW public.vw_dashboard_evento AS
   GROUP BY e.id, e.nome_evento, e.data_evento;
 
 
-ALTER VIEW public.vw_dashboard_evento OWNER TO postgres;
-
 --
 -- TOC entry 246 (class 1259 OID 17164)
--- Name: vw_resumo_financeiro_evento; Type: VIEW; Schema: public; Owner: postgres
+-- Name: vw_resumo_financeiro_evento; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.vw_resumo_financeiro_evento AS
@@ -954,11 +874,9 @@ CREATE VIEW public.vw_resumo_financeiro_evento AS
   GROUP BY e.id, e.nome_evento, e.orcamento_total;
 
 
-ALTER VIEW public.vw_resumo_financeiro_evento OWNER TO postgres;
-
 --
 -- TOC entry 247 (class 1259 OID 17169)
--- Name: vw_vitrine_fornecedores; Type: VIEW; Schema: public; Owner: postgres
+-- Name: vw_vitrine_fornecedores; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW public.vw_vitrine_fornecedores AS
@@ -982,11 +900,9 @@ CREATE VIEW public.vw_vitrine_fornecedores AS
           WHERE ((a.fornecedor_id = f.id) AND (a.status = 'ATIVA'::public.status_assinatura) AND ((a.fim_em IS NULL) OR (a.fim_em >= CURRENT_DATE))))));
 
 
-ALTER VIEW public.vw_vitrine_fornecedores OWNER TO postgres;
-
 --
--- TOC entry 5147 (class 2606 OID 17175)
--- Name: assinaturas_fornecedor assinaturas_fornecedor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5149 (class 2606 OID 17175)
+-- Name: assinaturas_fornecedor assinaturas_fornecedor_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assinaturas_fornecedor
@@ -994,8 +910,8 @@ ALTER TABLE ONLY public.assinaturas_fornecedor
 
 
 --
--- TOC entry 5152 (class 2606 OID 17177)
--- Name: avaliacoes_fornecedores avaliacoes_fornecedores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5154 (class 2606 OID 17177)
+-- Name: avaliacoes_fornecedores avaliacoes_fornecedores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.avaliacoes_fornecedores
@@ -1003,8 +919,8 @@ ALTER TABLE ONLY public.avaliacoes_fornecedores
 
 
 --
--- TOC entry 5157 (class 2606 OID 17179)
--- Name: blocos_site_evento blocos_site_evento_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5159 (class 2606 OID 17179)
+-- Name: blocos_site_evento blocos_site_evento_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.blocos_site_evento
@@ -1012,8 +928,8 @@ ALTER TABLE ONLY public.blocos_site_evento
 
 
 --
--- TOC entry 5160 (class 2606 OID 17181)
--- Name: categorias_fornecedores categorias_fornecedores_nome_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5162 (class 2606 OID 17181)
+-- Name: categorias_fornecedores categorias_fornecedores_nome_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.categorias_fornecedores
@@ -1021,8 +937,8 @@ ALTER TABLE ONLY public.categorias_fornecedores
 
 
 --
--- TOC entry 5162 (class 2606 OID 17183)
--- Name: categorias_fornecedores categorias_fornecedores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5164 (class 2606 OID 17183)
+-- Name: categorias_fornecedores categorias_fornecedores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.categorias_fornecedores
@@ -1030,8 +946,8 @@ ALTER TABLE ONLY public.categorias_fornecedores
 
 
 --
--- TOC entry 5164 (class 2606 OID 17185)
--- Name: consentimentos_lgpd consentimentos_lgpd_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5166 (class 2606 OID 17185)
+-- Name: consentimentos_lgpd consentimentos_lgpd_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.consentimentos_lgpd
@@ -1039,8 +955,8 @@ ALTER TABLE ONLY public.consentimentos_lgpd
 
 
 --
--- TOC entry 5167 (class 2606 OID 17187)
--- Name: contribuicoes_presentes contribuicoes_presentes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5169 (class 2606 OID 17187)
+-- Name: contribuicoes_presentes contribuicoes_presentes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.contribuicoes_presentes
@@ -1048,8 +964,8 @@ ALTER TABLE ONLY public.contribuicoes_presentes
 
 
 --
--- TOC entry 5171 (class 2606 OID 17189)
--- Name: convidados convidados_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5173 (class 2606 OID 17189)
+-- Name: convidados convidados_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.convidados
@@ -1057,8 +973,8 @@ ALTER TABLE ONLY public.convidados
 
 
 --
--- TOC entry 5173 (class 2606 OID 17191)
--- Name: convidados convidados_qr_code_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5175 (class 2606 OID 17191)
+-- Name: convidados convidados_qr_code_token_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.convidados
@@ -1066,8 +982,8 @@ ALTER TABLE ONLY public.convidados
 
 
 --
--- TOC entry 5178 (class 2606 OID 17193)
--- Name: convites convites_link_publico_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5180 (class 2606 OID 17193)
+-- Name: convites convites_link_publico_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.convites
@@ -1075,8 +991,8 @@ ALTER TABLE ONLY public.convites
 
 
 --
--- TOC entry 5180 (class 2606 OID 17195)
--- Name: convites convites_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5182 (class 2606 OID 17195)
+-- Name: convites convites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.convites
@@ -1084,8 +1000,8 @@ ALTER TABLE ONLY public.convites
 
 
 --
--- TOC entry 5183 (class 2606 OID 17197)
--- Name: eventos eventos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5185 (class 2606 OID 17197)
+-- Name: eventos eventos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.eventos
@@ -1093,8 +1009,8 @@ ALTER TABLE ONLY public.eventos
 
 
 --
--- TOC entry 5187 (class 2606 OID 17199)
--- Name: fornecedores fornecedores_cnpj_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5189 (class 2606 OID 17199)
+-- Name: fornecedores fornecedores_cnpj_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fornecedores
@@ -1102,8 +1018,8 @@ ALTER TABLE ONLY public.fornecedores
 
 
 --
--- TOC entry 5189 (class 2606 OID 17201)
--- Name: fornecedores fornecedores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5191 (class 2606 OID 17201)
+-- Name: fornecedores fornecedores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fornecedores
@@ -1111,8 +1027,8 @@ ALTER TABLE ONLY public.fornecedores
 
 
 --
--- TOC entry 5191 (class 2606 OID 17203)
--- Name: fornecedores fornecedores_usuario_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5193 (class 2606 OID 17203)
+-- Name: fornecedores fornecedores_usuario_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fornecedores
@@ -1120,8 +1036,8 @@ ALTER TABLE ONLY public.fornecedores
 
 
 --
--- TOC entry 5200 (class 2606 OID 17205)
--- Name: logs_auditoria logs_auditoria_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5202 (class 2606 OID 17205)
+-- Name: logs_auditoria logs_auditoria_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.logs_auditoria
@@ -1129,8 +1045,8 @@ ALTER TABLE ONLY public.logs_auditoria
 
 
 --
--- TOC entry 5203 (class 2606 OID 17207)
--- Name: notificacoes notificacoes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5205 (class 2606 OID 17207)
+-- Name: notificacoes notificacoes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.notificacoes
@@ -1138,8 +1054,8 @@ ALTER TABLE ONLY public.notificacoes
 
 
 --
--- TOC entry 5211 (class 2606 OID 17209)
--- Name: orcamentos_categorias orcamentos_categorias_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5213 (class 2606 OID 17209)
+-- Name: orcamentos_categorias orcamentos_categorias_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos_categorias
@@ -1147,8 +1063,8 @@ ALTER TABLE ONLY public.orcamentos_categorias
 
 
 --
--- TOC entry 5208 (class 2606 OID 17211)
--- Name: orcamentos orcamentos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5210 (class 2606 OID 17211)
+-- Name: orcamentos orcamentos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos
@@ -1156,8 +1072,8 @@ ALTER TABLE ONLY public.orcamentos
 
 
 --
--- TOC entry 5217 (class 2606 OID 17213)
--- Name: pagamentos_fornecedor pagamentos_fornecedor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5219 (class 2606 OID 17213)
+-- Name: pagamentos_fornecedor pagamentos_fornecedor_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.pagamentos_fornecedor
@@ -1165,8 +1081,8 @@ ALTER TABLE ONLY public.pagamentos_fornecedor
 
 
 --
--- TOC entry 5219 (class 2606 OID 17215)
--- Name: pix_configuracoes pix_configuracoes_evento_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5221 (class 2606 OID 17215)
+-- Name: pix_configuracoes pix_configuracoes_evento_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.pix_configuracoes
@@ -1174,8 +1090,8 @@ ALTER TABLE ONLY public.pix_configuracoes
 
 
 --
--- TOC entry 5221 (class 2606 OID 17217)
--- Name: pix_configuracoes pix_configuracoes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5223 (class 2606 OID 17217)
+-- Name: pix_configuracoes pix_configuracoes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.pix_configuracoes
@@ -1183,8 +1099,8 @@ ALTER TABLE ONLY public.pix_configuracoes
 
 
 --
--- TOC entry 5224 (class 2606 OID 17219)
--- Name: portfolio_fornecedor portfolio_fornecedor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5226 (class 2606 OID 17219)
+-- Name: portfolio_fornecedor portfolio_fornecedor_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.portfolio_fornecedor
@@ -1192,8 +1108,8 @@ ALTER TABLE ONLY public.portfolio_fornecedor
 
 
 --
--- TOC entry 5227 (class 2606 OID 17221)
--- Name: presentes presentes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5229 (class 2606 OID 17221)
+-- Name: presentes presentes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.presentes
@@ -1201,8 +1117,8 @@ ALTER TABLE ONLY public.presentes
 
 
 --
--- TOC entry 5230 (class 2606 OID 17223)
--- Name: save_the_date save_the_date_link_publico_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5232 (class 2606 OID 17223)
+-- Name: save_the_date save_the_date_link_publico_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.save_the_date
@@ -1210,8 +1126,8 @@ ALTER TABLE ONLY public.save_the_date
 
 
 --
--- TOC entry 5232 (class 2606 OID 17225)
--- Name: save_the_date save_the_date_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5234 (class 2606 OID 17225)
+-- Name: save_the_date save_the_date_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.save_the_date
@@ -1219,8 +1135,8 @@ ALTER TABLE ONLY public.save_the_date
 
 
 --
--- TOC entry 5234 (class 2606 OID 17227)
--- Name: sessoes_usuario sessoes_usuario_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5236 (class 2606 OID 17227)
+-- Name: sessoes_usuario sessoes_usuario_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sessoes_usuario
@@ -1228,8 +1144,8 @@ ALTER TABLE ONLY public.sessoes_usuario
 
 
 --
--- TOC entry 5236 (class 2606 OID 17229)
--- Name: sessoes_usuario sessoes_usuario_refresh_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5238 (class 2606 OID 17229)
+-- Name: sessoes_usuario sessoes_usuario_refresh_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sessoes_usuario
@@ -1237,8 +1153,8 @@ ALTER TABLE ONLY public.sessoes_usuario
 
 
 --
--- TOC entry 5239 (class 2606 OID 17231)
--- Name: sites_evento sites_evento_evento_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5241 (class 2606 OID 17231)
+-- Name: sites_evento sites_evento_evento_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sites_evento
@@ -1246,8 +1162,8 @@ ALTER TABLE ONLY public.sites_evento
 
 
 --
--- TOC entry 5241 (class 2606 OID 17233)
--- Name: sites_evento sites_evento_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5243 (class 2606 OID 17233)
+-- Name: sites_evento sites_evento_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sites_evento
@@ -1255,8 +1171,8 @@ ALTER TABLE ONLY public.sites_evento
 
 
 --
--- TOC entry 5243 (class 2606 OID 17235)
--- Name: sites_evento sites_evento_slug_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5245 (class 2606 OID 17235)
+-- Name: sites_evento sites_evento_slug_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sites_evento
@@ -1264,8 +1180,8 @@ ALTER TABLE ONLY public.sites_evento
 
 
 --
--- TOC entry 5247 (class 2606 OID 17237)
--- Name: solicitacoes_lgpd solicitacoes_lgpd_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5249 (class 2606 OID 17237)
+-- Name: solicitacoes_lgpd solicitacoes_lgpd_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.solicitacoes_lgpd
@@ -1273,8 +1189,8 @@ ALTER TABLE ONLY public.solicitacoes_lgpd
 
 
 --
--- TOC entry 5252 (class 2606 OID 17239)
--- Name: tarefas tarefas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5254 (class 2606 OID 17239)
+-- Name: tarefas tarefas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tarefas
@@ -1282,8 +1198,8 @@ ALTER TABLE ONLY public.tarefas
 
 
 --
--- TOC entry 5255 (class 2606 OID 17241)
--- Name: tokens_confirmacao_email tokens_confirmacao_email_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5257 (class 2606 OID 17241)
+-- Name: tokens_confirmacao_email tokens_confirmacao_email_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tokens_confirmacao_email
@@ -1291,8 +1207,8 @@ ALTER TABLE ONLY public.tokens_confirmacao_email
 
 
 --
--- TOC entry 5257 (class 2606 OID 17243)
--- Name: tokens_confirmacao_email tokens_confirmacao_email_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5259 (class 2606 OID 17243)
+-- Name: tokens_confirmacao_email tokens_confirmacao_email_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tokens_confirmacao_email
@@ -1300,8 +1216,8 @@ ALTER TABLE ONLY public.tokens_confirmacao_email
 
 
 --
--- TOC entry 5259 (class 2606 OID 17245)
--- Name: tokens_recuperacao_senha tokens_recuperacao_senha_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5261 (class 2606 OID 17245)
+-- Name: tokens_recuperacao_senha tokens_recuperacao_senha_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tokens_recuperacao_senha
@@ -1309,8 +1225,8 @@ ALTER TABLE ONLY public.tokens_recuperacao_senha
 
 
 --
--- TOC entry 5261 (class 2606 OID 17247)
--- Name: tokens_recuperacao_senha tokens_recuperacao_senha_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5263 (class 2606 OID 17247)
+-- Name: tokens_recuperacao_senha tokens_recuperacao_senha_token_hash_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tokens_recuperacao_senha
@@ -1318,8 +1234,8 @@ ALTER TABLE ONLY public.tokens_recuperacao_senha
 
 
 --
--- TOC entry 5155 (class 2606 OID 17249)
--- Name: avaliacoes_fornecedores uq_avaliacao_evento_fornecedor; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5157 (class 2606 OID 17249)
+-- Name: avaliacoes_fornecedores uq_avaliacao_evento_fornecedor; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.avaliacoes_fornecedores
@@ -1327,8 +1243,8 @@ ALTER TABLE ONLY public.avaliacoes_fornecedores
 
 
 --
--- TOC entry 5213 (class 2606 OID 17251)
--- Name: orcamentos_categorias uq_evento_categoria_orcamento; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5215 (class 2606 OID 17251)
+-- Name: orcamentos_categorias uq_evento_categoria_orcamento; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos_categorias
@@ -1336,8 +1252,8 @@ ALTER TABLE ONLY public.orcamentos_categorias
 
 
 --
--- TOC entry 5265 (class 2606 OID 17253)
--- Name: usuarios usuarios_cpf_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5267 (class 2606 OID 17253)
+-- Name: usuarios usuarios_cpf_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.usuarios
@@ -1345,8 +1261,8 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 5267 (class 2606 OID 17255)
--- Name: usuarios usuarios_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5269 (class 2606 OID 17255)
+-- Name: usuarios usuarios_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.usuarios
@@ -1354,8 +1270,8 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 5269 (class 2606 OID 17488)
--- Name: usuarios usuarios_google_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5271 (class 2606 OID 17488)
+-- Name: usuarios usuarios_google_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.usuarios
@@ -1363,8 +1279,8 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 5271 (class 2606 OID 17257)
--- Name: usuarios usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5273 (class 2606 OID 17257)
+-- Name: usuarios usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.usuarios
@@ -1372,472 +1288,472 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 5148 (class 1259 OID 17258)
--- Name: idx_assinaturas_fornecedor; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5150 (class 1259 OID 17258)
+-- Name: idx_assinaturas_fornecedor; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_assinaturas_fornecedor ON public.assinaturas_fornecedor USING btree (fornecedor_id);
 
 
 --
--- TOC entry 5149 (class 1259 OID 17259)
--- Name: idx_assinaturas_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5151 (class 1259 OID 17259)
+-- Name: idx_assinaturas_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_assinaturas_status ON public.assinaturas_fornecedor USING btree (status);
 
 
 --
--- TOC entry 5153 (class 1259 OID 17260)
--- Name: idx_avaliacoes_fornecedor; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5155 (class 1259 OID 17260)
+-- Name: idx_avaliacoes_fornecedor; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_avaliacoes_fornecedor ON public.avaliacoes_fornecedores USING btree (fornecedor_id);
 
 
 --
--- TOC entry 5158 (class 1259 OID 17261)
--- Name: idx_blocos_site; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5160 (class 1259 OID 17261)
+-- Name: idx_blocos_site; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_blocos_site ON public.blocos_site_evento USING btree (site_id, ordem);
 
 
 --
--- TOC entry 5165 (class 1259 OID 17262)
--- Name: idx_consentimentos_usuario; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5167 (class 1259 OID 17262)
+-- Name: idx_consentimentos_usuario; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_consentimentos_usuario ON public.consentimentos_lgpd USING btree (usuario_id);
 
 
 --
--- TOC entry 5168 (class 1259 OID 17263)
--- Name: idx_contribuicoes_presente; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5170 (class 1259 OID 17263)
+-- Name: idx_contribuicoes_presente; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_contribuicoes_presente ON public.contribuicoes_presentes USING btree (presente_id);
 
 
 --
--- TOC entry 5169 (class 1259 OID 17264)
--- Name: idx_contribuicoes_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5171 (class 1259 OID 17264)
+-- Name: idx_contribuicoes_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_contribuicoes_status ON public.contribuicoes_presentes USING btree (status);
 
 
 --
--- TOC entry 5174 (class 1259 OID 17265)
--- Name: idx_convidados_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5176 (class 1259 OID 17265)
+-- Name: idx_convidados_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_convidados_evento ON public.convidados USING btree (evento_id);
 
 
 --
--- TOC entry 5175 (class 1259 OID 17266)
--- Name: idx_convidados_rsvp; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5177 (class 1259 OID 17266)
+-- Name: idx_convidados_rsvp; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_convidados_rsvp ON public.convidados USING btree (status_rsvp);
 
 
 --
--- TOC entry 5181 (class 1259 OID 17267)
--- Name: idx_convites_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5183 (class 1259 OID 17267)
+-- Name: idx_convites_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_convites_evento ON public.convites USING btree (evento_id);
 
 
 --
--- TOC entry 5184 (class 1259 OID 17268)
--- Name: idx_eventos_data; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5186 (class 1259 OID 17268)
+-- Name: idx_eventos_data; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_eventos_data ON public.eventos USING btree (data_evento);
 
 
 --
--- TOC entry 5185 (class 1259 OID 17269)
--- Name: idx_eventos_organizador; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5187 (class 1259 OID 17269)
+-- Name: idx_eventos_organizador; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_eventos_organizador ON public.eventos USING btree (organizador_id);
 
 
 --
--- TOC entry 5192 (class 1259 OID 17270)
--- Name: idx_fornecedores_avaliacao; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5194 (class 1259 OID 17270)
+-- Name: idx_fornecedores_avaliacao; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_fornecedores_avaliacao ON public.fornecedores USING btree (avaliacao_media DESC);
 
 
 --
--- TOC entry 5193 (class 1259 OID 17271)
--- Name: idx_fornecedores_categoria; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5195 (class 1259 OID 17271)
+-- Name: idx_fornecedores_categoria; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_fornecedores_categoria ON public.fornecedores USING btree (categoria_id);
 
 
 --
--- TOC entry 5194 (class 1259 OID 17272)
--- Name: idx_fornecedores_localizacao; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5196 (class 1259 OID 17272)
+-- Name: idx_fornecedores_localizacao; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_fornecedores_localizacao ON public.fornecedores USING btree (cidade, estado);
 
 
 --
--- TOC entry 5195 (class 1259 OID 17273)
--- Name: idx_fornecedores_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5197 (class 1259 OID 17273)
+-- Name: idx_fornecedores_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_fornecedores_status ON public.fornecedores USING btree (status);
 
 
 --
--- TOC entry 5196 (class 1259 OID 17274)
--- Name: idx_logs_data; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5198 (class 1259 OID 17274)
+-- Name: idx_logs_data; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_logs_data ON public.logs_auditoria USING btree (criado_em);
 
 
 --
--- TOC entry 5197 (class 1259 OID 17275)
--- Name: idx_logs_tabela_registro; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5199 (class 1259 OID 17275)
+-- Name: idx_logs_tabela_registro; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_logs_tabela_registro ON public.logs_auditoria USING btree (tabela_afetada, registro_id);
 
 
 --
--- TOC entry 5198 (class 1259 OID 17276)
--- Name: idx_logs_usuario; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5200 (class 1259 OID 17276)
+-- Name: idx_logs_usuario; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_logs_usuario ON public.logs_auditoria USING btree (usuario_id);
 
 
 --
--- TOC entry 5201 (class 1259 OID 17277)
--- Name: idx_notificacoes_usuario; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5203 (class 1259 OID 17277)
+-- Name: idx_notificacoes_usuario; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_notificacoes_usuario ON public.notificacoes USING btree (usuario_id, lida);
 
 
 --
--- TOC entry 5209 (class 1259 OID 17278)
--- Name: idx_orcamentos_categorias_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5211 (class 1259 OID 17278)
+-- Name: idx_orcamentos_categorias_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_orcamentos_categorias_evento ON public.orcamentos_categorias USING btree (evento_id);
 
 
 --
--- TOC entry 5204 (class 1259 OID 17279)
--- Name: idx_orcamentos_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5206 (class 1259 OID 17279)
+-- Name: idx_orcamentos_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_orcamentos_evento ON public.orcamentos USING btree (evento_id);
 
 
 --
--- TOC entry 5205 (class 1259 OID 17280)
--- Name: idx_orcamentos_fornecedor; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5207 (class 1259 OID 17280)
+-- Name: idx_orcamentos_fornecedor; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_orcamentos_fornecedor ON public.orcamentos USING btree (fornecedor_id);
 
 
 --
--- TOC entry 5206 (class 1259 OID 17281)
--- Name: idx_orcamentos_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5208 (class 1259 OID 17281)
+-- Name: idx_orcamentos_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_orcamentos_status ON public.orcamentos USING btree (status);
 
 
 --
--- TOC entry 5214 (class 1259 OID 17282)
--- Name: idx_pagamentos_fornecedor; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5216 (class 1259 OID 17282)
+-- Name: idx_pagamentos_fornecedor; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_pagamentos_fornecedor ON public.pagamentos_fornecedor USING btree (fornecedor_id);
 
 
 --
--- TOC entry 5215 (class 1259 OID 17283)
--- Name: idx_pagamentos_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5217 (class 1259 OID 17283)
+-- Name: idx_pagamentos_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_pagamentos_status ON public.pagamentos_fornecedor USING btree (status);
 
 
 --
--- TOC entry 5222 (class 1259 OID 17284)
--- Name: idx_portfolio_fornecedor; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5224 (class 1259 OID 17284)
+-- Name: idx_portfolio_fornecedor; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_portfolio_fornecedor ON public.portfolio_fornecedor USING btree (fornecedor_id);
 
 
 --
--- TOC entry 5225 (class 1259 OID 17285)
--- Name: idx_presentes_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5227 (class 1259 OID 17285)
+-- Name: idx_presentes_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_presentes_evento ON public.presentes USING btree (evento_id);
 
 
 --
--- TOC entry 5228 (class 1259 OID 17286)
--- Name: idx_save_the_date_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5230 (class 1259 OID 17286)
+-- Name: idx_save_the_date_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_save_the_date_evento ON public.save_the_date USING btree (evento_id);
 
 
 --
--- TOC entry 5237 (class 1259 OID 17287)
--- Name: idx_sites_evento_slug; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5239 (class 1259 OID 17287)
+-- Name: idx_sites_evento_slug; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_sites_evento_slug ON public.sites_evento USING btree (slug);
 
 
 --
--- TOC entry 5244 (class 1259 OID 17288)
--- Name: idx_solicitacoes_lgpd_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5246 (class 1259 OID 17288)
+-- Name: idx_solicitacoes_lgpd_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_solicitacoes_lgpd_status ON public.solicitacoes_lgpd USING btree (status);
 
 
 --
--- TOC entry 5245 (class 1259 OID 17289)
--- Name: idx_solicitacoes_lgpd_usuario; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5247 (class 1259 OID 17289)
+-- Name: idx_solicitacoes_lgpd_usuario; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_solicitacoes_lgpd_usuario ON public.solicitacoes_lgpd USING btree (usuario_id);
 
 
 --
--- TOC entry 5248 (class 1259 OID 17290)
--- Name: idx_tarefas_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5250 (class 1259 OID 17290)
+-- Name: idx_tarefas_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_tarefas_evento ON public.tarefas USING btree (evento_id);
 
 
 --
--- TOC entry 5249 (class 1259 OID 17291)
--- Name: idx_tarefas_prazo; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5251 (class 1259 OID 17291)
+-- Name: idx_tarefas_prazo; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_tarefas_prazo ON public.tarefas USING btree (prazo);
 
 
 --
--- TOC entry 5250 (class 1259 OID 17292)
--- Name: idx_tarefas_status; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5252 (class 1259 OID 17292)
+-- Name: idx_tarefas_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_tarefas_status ON public.tarefas USING btree (status);
 
 
 --
--- TOC entry 5253 (class 1259 OID 17293)
--- Name: idx_tokens_email_usuario; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5255 (class 1259 OID 17293)
+-- Name: idx_tokens_email_usuario; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_tokens_email_usuario ON public.tokens_confirmacao_email USING btree (usuario_id);
 
 
 --
--- TOC entry 5262 (class 1259 OID 17294)
--- Name: idx_usuarios_email_confirmado; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5264 (class 1259 OID 17294)
+-- Name: idx_usuarios_email_confirmado; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_usuarios_email_confirmado ON public.usuarios USING btree (email_confirmado);
 
 
 --
--- TOC entry 5263 (class 1259 OID 17295)
--- Name: idx_usuarios_perfil; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5265 (class 1259 OID 17295)
+-- Name: idx_usuarios_perfil; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_usuarios_perfil ON public.usuarios USING btree (perfil);
 
 
 --
--- TOC entry 5150 (class 1259 OID 17296)
--- Name: uq_assinatura_ativa_fornecedor; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5152 (class 1259 OID 17296)
+-- Name: uq_assinatura_ativa_fornecedor; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX uq_assinatura_ativa_fornecedor ON public.assinaturas_fornecedor USING btree (fornecedor_id) WHERE (status = ANY (ARRAY['ATIVA'::public.status_assinatura, 'PENDENTE'::public.status_assinatura]));
 
 
 --
--- TOC entry 5176 (class 1259 OID 17297)
--- Name: uq_convidado_email_evento; Type: INDEX; Schema: public; Owner: postgres
+-- TOC entry 5178 (class 1259 OID 17297)
+-- Name: uq_convidado_email_evento; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX uq_convidado_email_evento ON public.convidados USING btree (evento_id, email) WHERE (email IS NOT NULL);
 
 
 --
--- TOC entry 5306 (class 2620 OID 17298)
--- Name: assinaturas_fornecedor trg_assinaturas_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5308 (class 2620 OID 17298)
+-- Name: assinaturas_fornecedor trg_assinaturas_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_assinaturas_updated_at BEFORE UPDATE ON public.assinaturas_fornecedor FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5307 (class 2620 OID 17299)
--- Name: avaliacoes_fornecedores trg_atualizar_media_fornecedor; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5309 (class 2620 OID 17299)
+-- Name: avaliacoes_fornecedores trg_atualizar_media_fornecedor; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_atualizar_media_fornecedor AFTER INSERT OR DELETE OR UPDATE ON public.avaliacoes_fornecedores FOR EACH ROW EXECUTE FUNCTION public.atualizar_media_fornecedor();
 
 
 --
--- TOC entry 5308 (class 2620 OID 17300)
--- Name: blocos_site_evento trg_blocos_site_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5310 (class 2620 OID 17300)
+-- Name: blocos_site_evento trg_blocos_site_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_blocos_site_updated_at BEFORE UPDATE ON public.blocos_site_evento FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5309 (class 2620 OID 17301)
--- Name: categorias_fornecedores trg_categorias_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5311 (class 2620 OID 17301)
+-- Name: categorias_fornecedores trg_categorias_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_categorias_updated_at BEFORE UPDATE ON public.categorias_fornecedores FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5310 (class 2620 OID 17302)
--- Name: convidados trg_convidados_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5312 (class 2620 OID 17302)
+-- Name: convidados trg_convidados_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_convidados_updated_at BEFORE UPDATE ON public.convidados FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5311 (class 2620 OID 17303)
--- Name: convites trg_convites_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5313 (class 2620 OID 17303)
+-- Name: convites trg_convites_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_convites_updated_at BEFORE UPDATE ON public.convites FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5312 (class 2620 OID 17304)
--- Name: eventos trg_eventos_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5314 (class 2620 OID 17304)
+-- Name: eventos trg_eventos_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_eventos_updated_at BEFORE UPDATE ON public.eventos FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5313 (class 2620 OID 17305)
--- Name: fornecedores trg_fornecedores_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5315 (class 2620 OID 17305)
+-- Name: fornecedores trg_fornecedores_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_fornecedores_updated_at BEFORE UPDATE ON public.fornecedores FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5315 (class 2620 OID 17306)
--- Name: orcamentos_categorias trg_orcamentos_categorias_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5317 (class 2620 OID 17306)
+-- Name: orcamentos_categorias trg_orcamentos_categorias_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_orcamentos_categorias_updated_at BEFORE UPDATE ON public.orcamentos_categorias FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5314 (class 2620 OID 17307)
--- Name: orcamentos trg_orcamentos_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5316 (class 2620 OID 17307)
+-- Name: orcamentos trg_orcamentos_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_orcamentos_updated_at BEFORE UPDATE ON public.orcamentos FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5316 (class 2620 OID 17308)
--- Name: pagamentos_fornecedor trg_pagamentos_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5318 (class 2620 OID 17308)
+-- Name: pagamentos_fornecedor trg_pagamentos_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_pagamentos_updated_at BEFORE UPDATE ON public.pagamentos_fornecedor FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5317 (class 2620 OID 17309)
--- Name: pix_configuracoes trg_pix_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5319 (class 2620 OID 17309)
+-- Name: pix_configuracoes trg_pix_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_pix_updated_at BEFORE UPDATE ON public.pix_configuracoes FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5318 (class 2620 OID 17310)
--- Name: presentes trg_presentes_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5320 (class 2620 OID 17310)
+-- Name: presentes trg_presentes_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_presentes_updated_at BEFORE UPDATE ON public.presentes FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5319 (class 2620 OID 17311)
--- Name: save_the_date trg_save_the_date_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5321 (class 2620 OID 17311)
+-- Name: save_the_date trg_save_the_date_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_save_the_date_updated_at BEFORE UPDATE ON public.save_the_date FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5320 (class 2620 OID 17312)
--- Name: sites_evento trg_sites_evento_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5322 (class 2620 OID 17312)
+-- Name: sites_evento trg_sites_evento_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_sites_evento_updated_at BEFORE UPDATE ON public.sites_evento FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5321 (class 2620 OID 17313)
--- Name: solicitacoes_lgpd trg_solicitacoes_lgpd_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5323 (class 2620 OID 17313)
+-- Name: solicitacoes_lgpd trg_solicitacoes_lgpd_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_solicitacoes_lgpd_updated_at BEFORE UPDATE ON public.solicitacoes_lgpd FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5322 (class 2620 OID 17314)
--- Name: tarefas trg_tarefas_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5324 (class 2620 OID 17314)
+-- Name: tarefas trg_tarefas_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_tarefas_updated_at BEFORE UPDATE ON public.tarefas FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5323 (class 2620 OID 17315)
--- Name: usuarios trg_usuarios_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- TOC entry 5325 (class 2620 OID 17315)
+-- Name: usuarios trg_usuarios_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_usuarios_updated_at BEFORE UPDATE ON public.usuarios FOR EACH ROW EXECUTE FUNCTION public.atualizar_updated_at();
 
 
 --
--- TOC entry 5272 (class 2606 OID 17316)
--- Name: assinaturas_fornecedor assinaturas_fornecedor_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5274 (class 2606 OID 17316)
+-- Name: assinaturas_fornecedor assinaturas_fornecedor_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assinaturas_fornecedor
@@ -1845,8 +1761,8 @@ ALTER TABLE ONLY public.assinaturas_fornecedor
 
 
 --
--- TOC entry 5273 (class 2606 OID 17321)
--- Name: avaliacoes_fornecedores avaliacoes_fornecedores_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5275 (class 2606 OID 17321)
+-- Name: avaliacoes_fornecedores avaliacoes_fornecedores_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.avaliacoes_fornecedores
@@ -1854,8 +1770,8 @@ ALTER TABLE ONLY public.avaliacoes_fornecedores
 
 
 --
--- TOC entry 5274 (class 2606 OID 17326)
--- Name: avaliacoes_fornecedores avaliacoes_fornecedores_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5276 (class 2606 OID 17326)
+-- Name: avaliacoes_fornecedores avaliacoes_fornecedores_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.avaliacoes_fornecedores
@@ -1863,8 +1779,8 @@ ALTER TABLE ONLY public.avaliacoes_fornecedores
 
 
 --
--- TOC entry 5275 (class 2606 OID 17331)
--- Name: avaliacoes_fornecedores avaliacoes_fornecedores_organizador_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5277 (class 2606 OID 17331)
+-- Name: avaliacoes_fornecedores avaliacoes_fornecedores_organizador_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.avaliacoes_fornecedores
@@ -1872,8 +1788,8 @@ ALTER TABLE ONLY public.avaliacoes_fornecedores
 
 
 --
--- TOC entry 5276 (class 2606 OID 17336)
--- Name: blocos_site_evento blocos_site_evento_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5278 (class 2606 OID 17336)
+-- Name: blocos_site_evento blocos_site_evento_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.blocos_site_evento
@@ -1881,8 +1797,8 @@ ALTER TABLE ONLY public.blocos_site_evento
 
 
 --
--- TOC entry 5277 (class 2606 OID 17341)
--- Name: consentimentos_lgpd consentimentos_lgpd_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5279 (class 2606 OID 17341)
+-- Name: consentimentos_lgpd consentimentos_lgpd_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.consentimentos_lgpd
@@ -1890,8 +1806,8 @@ ALTER TABLE ONLY public.consentimentos_lgpd
 
 
 --
--- TOC entry 5278 (class 2606 OID 17346)
--- Name: contribuicoes_presentes contribuicoes_presentes_presente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5280 (class 2606 OID 17346)
+-- Name: contribuicoes_presentes contribuicoes_presentes_presente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.contribuicoes_presentes
@@ -1899,8 +1815,8 @@ ALTER TABLE ONLY public.contribuicoes_presentes
 
 
 --
--- TOC entry 5279 (class 2606 OID 17351)
--- Name: convidados convidados_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5281 (class 2606 OID 17351)
+-- Name: convidados convidados_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.convidados
@@ -1908,8 +1824,8 @@ ALTER TABLE ONLY public.convidados
 
 
 --
--- TOC entry 5280 (class 2606 OID 17356)
--- Name: convites convites_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5282 (class 2606 OID 17356)
+-- Name: convites convites_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.convites
@@ -1917,8 +1833,8 @@ ALTER TABLE ONLY public.convites
 
 
 --
--- TOC entry 5281 (class 2606 OID 17361)
--- Name: eventos eventos_organizador_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5283 (class 2606 OID 17361)
+-- Name: eventos eventos_organizador_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.eventos
@@ -1926,8 +1842,8 @@ ALTER TABLE ONLY public.eventos
 
 
 --
--- TOC entry 5282 (class 2606 OID 17366)
--- Name: fornecedores fornecedores_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5284 (class 2606 OID 17366)
+-- Name: fornecedores fornecedores_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fornecedores
@@ -1935,8 +1851,8 @@ ALTER TABLE ONLY public.fornecedores
 
 
 --
--- TOC entry 5283 (class 2606 OID 17371)
--- Name: fornecedores fornecedores_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5285 (class 2606 OID 17371)
+-- Name: fornecedores fornecedores_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fornecedores
@@ -1944,8 +1860,8 @@ ALTER TABLE ONLY public.fornecedores
 
 
 --
--- TOC entry 5284 (class 2606 OID 17376)
--- Name: fornecedores fornecedores_validado_por_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5286 (class 2606 OID 17376)
+-- Name: fornecedores fornecedores_validado_por_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.fornecedores
@@ -1953,8 +1869,8 @@ ALTER TABLE ONLY public.fornecedores
 
 
 --
--- TOC entry 5285 (class 2606 OID 17381)
--- Name: logs_auditoria logs_auditoria_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5287 (class 2606 OID 17381)
+-- Name: logs_auditoria logs_auditoria_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.logs_auditoria
@@ -1962,8 +1878,8 @@ ALTER TABLE ONLY public.logs_auditoria
 
 
 --
--- TOC entry 5286 (class 2606 OID 17386)
--- Name: notificacoes notificacoes_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5288 (class 2606 OID 17386)
+-- Name: notificacoes notificacoes_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.notificacoes
@@ -1971,8 +1887,8 @@ ALTER TABLE ONLY public.notificacoes
 
 
 --
--- TOC entry 5287 (class 2606 OID 17391)
--- Name: orcamentos orcamentos_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5289 (class 2606 OID 17391)
+-- Name: orcamentos orcamentos_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos
@@ -1980,8 +1896,8 @@ ALTER TABLE ONLY public.orcamentos
 
 
 --
--- TOC entry 5290 (class 2606 OID 17396)
--- Name: orcamentos_categorias orcamentos_categorias_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5292 (class 2606 OID 17396)
+-- Name: orcamentos_categorias orcamentos_categorias_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos_categorias
@@ -1989,8 +1905,8 @@ ALTER TABLE ONLY public.orcamentos_categorias
 
 
 --
--- TOC entry 5291 (class 2606 OID 17401)
--- Name: orcamentos_categorias orcamentos_categorias_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5293 (class 2606 OID 17401)
+-- Name: orcamentos_categorias orcamentos_categorias_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos_categorias
@@ -1998,8 +1914,8 @@ ALTER TABLE ONLY public.orcamentos_categorias
 
 
 --
--- TOC entry 5288 (class 2606 OID 17406)
--- Name: orcamentos orcamentos_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5290 (class 2606 OID 17406)
+-- Name: orcamentos orcamentos_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos
@@ -2007,8 +1923,8 @@ ALTER TABLE ONLY public.orcamentos
 
 
 --
--- TOC entry 5289 (class 2606 OID 17411)
--- Name: orcamentos orcamentos_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5291 (class 2606 OID 17411)
+-- Name: orcamentos orcamentos_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.orcamentos
@@ -2016,8 +1932,8 @@ ALTER TABLE ONLY public.orcamentos
 
 
 --
--- TOC entry 5292 (class 2606 OID 17416)
--- Name: pagamentos_fornecedor pagamentos_fornecedor_assinatura_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5294 (class 2606 OID 17416)
+-- Name: pagamentos_fornecedor pagamentos_fornecedor_assinatura_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.pagamentos_fornecedor
@@ -2025,8 +1941,8 @@ ALTER TABLE ONLY public.pagamentos_fornecedor
 
 
 --
--- TOC entry 5293 (class 2606 OID 17421)
--- Name: pagamentos_fornecedor pagamentos_fornecedor_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5295 (class 2606 OID 17421)
+-- Name: pagamentos_fornecedor pagamentos_fornecedor_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.pagamentos_fornecedor
@@ -2034,8 +1950,8 @@ ALTER TABLE ONLY public.pagamentos_fornecedor
 
 
 --
--- TOC entry 5294 (class 2606 OID 17426)
--- Name: pix_configuracoes pix_configuracoes_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5296 (class 2606 OID 17426)
+-- Name: pix_configuracoes pix_configuracoes_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.pix_configuracoes
@@ -2043,8 +1959,8 @@ ALTER TABLE ONLY public.pix_configuracoes
 
 
 --
--- TOC entry 5295 (class 2606 OID 17431)
--- Name: portfolio_fornecedor portfolio_fornecedor_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5297 (class 2606 OID 17431)
+-- Name: portfolio_fornecedor portfolio_fornecedor_fornecedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.portfolio_fornecedor
@@ -2052,8 +1968,8 @@ ALTER TABLE ONLY public.portfolio_fornecedor
 
 
 --
--- TOC entry 5296 (class 2606 OID 17436)
--- Name: presentes presentes_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5298 (class 2606 OID 17436)
+-- Name: presentes presentes_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.presentes
@@ -2061,8 +1977,8 @@ ALTER TABLE ONLY public.presentes
 
 
 --
--- TOC entry 5297 (class 2606 OID 17441)
--- Name: save_the_date save_the_date_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5299 (class 2606 OID 17441)
+-- Name: save_the_date save_the_date_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.save_the_date
@@ -2070,8 +1986,8 @@ ALTER TABLE ONLY public.save_the_date
 
 
 --
--- TOC entry 5298 (class 2606 OID 17446)
--- Name: sessoes_usuario sessoes_usuario_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5300 (class 2606 OID 17446)
+-- Name: sessoes_usuario sessoes_usuario_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sessoes_usuario
@@ -2079,8 +1995,8 @@ ALTER TABLE ONLY public.sessoes_usuario
 
 
 --
--- TOC entry 5299 (class 2606 OID 17451)
--- Name: sites_evento sites_evento_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5301 (class 2606 OID 17451)
+-- Name: sites_evento sites_evento_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sites_evento
@@ -2088,8 +2004,8 @@ ALTER TABLE ONLY public.sites_evento
 
 
 --
--- TOC entry 5300 (class 2606 OID 17456)
--- Name: solicitacoes_lgpd solicitacoes_lgpd_atendido_por_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5302 (class 2606 OID 17456)
+-- Name: solicitacoes_lgpd solicitacoes_lgpd_atendido_por_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.solicitacoes_lgpd
@@ -2097,8 +2013,8 @@ ALTER TABLE ONLY public.solicitacoes_lgpd
 
 
 --
--- TOC entry 5301 (class 2606 OID 17461)
--- Name: solicitacoes_lgpd solicitacoes_lgpd_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5303 (class 2606 OID 17461)
+-- Name: solicitacoes_lgpd solicitacoes_lgpd_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.solicitacoes_lgpd
@@ -2106,8 +2022,8 @@ ALTER TABLE ONLY public.solicitacoes_lgpd
 
 
 --
--- TOC entry 5302 (class 2606 OID 17466)
--- Name: tarefas tarefas_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5304 (class 2606 OID 17466)
+-- Name: tarefas tarefas_evento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tarefas
@@ -2115,8 +2031,8 @@ ALTER TABLE ONLY public.tarefas
 
 
 --
--- TOC entry 5303 (class 2606 OID 17471)
--- Name: tarefas tarefas_responsavel_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5305 (class 2606 OID 17471)
+-- Name: tarefas tarefas_responsavel_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tarefas
@@ -2124,8 +2040,8 @@ ALTER TABLE ONLY public.tarefas
 
 
 --
--- TOC entry 5304 (class 2606 OID 17476)
--- Name: tokens_confirmacao_email tokens_confirmacao_email_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5306 (class 2606 OID 17476)
+-- Name: tokens_confirmacao_email tokens_confirmacao_email_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tokens_confirmacao_email
@@ -2133,19 +2049,19 @@ ALTER TABLE ONLY public.tokens_confirmacao_email
 
 
 --
--- TOC entry 5305 (class 2606 OID 17481)
--- Name: tokens_recuperacao_senha tokens_recuperacao_senha_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 5307 (class 2606 OID 17481)
+-- Name: tokens_recuperacao_senha tokens_recuperacao_senha_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tokens_recuperacao_senha
     ADD CONSTRAINT tokens_recuperacao_senha_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES public.usuarios(id) ON DELETE CASCADE;
 
 
--- Completed on 2026-09-22 22:25:29
+-- Completed on 2026-11-05 14:47:48
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict WbVYsYvirIalD4qKVBK12YK6mrYHKC0MaZPSz5yXCXUGjJAKPKgJmv0O2RXJtjw
+\unrestrict AaQr3NfaHUoOJrLNe0njYMfp8c1HxTbyf7KldE7Jy5vyvIXtEhffHjL9DhD926h
 
