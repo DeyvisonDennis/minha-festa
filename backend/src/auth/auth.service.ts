@@ -12,6 +12,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { campoDaViolacao, violouUnicidade } from '../common/prisma-erros';
 
 @Injectable()
 export class AuthService {
@@ -44,10 +45,11 @@ export class AuthService {
       });
 
       return usuario;
-    } catch (error: any) {
-      if (error.code === 'P2002') {
-        const campo = error.meta?.target?.[0] ?? 'campo';
-        throw new ConflictException(`Já existe um usuário com esse ${campo}.`);
+    } catch (error) {
+      if (violouUnicidade(error)) {
+        throw new ConflictException(
+          `Já existe um usuário com esse ${campoDaViolacao(error)}.`,
+        );
       }
       throw error;
     }

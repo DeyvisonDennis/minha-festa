@@ -1,30 +1,47 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { EmailService } from '../email/email.service';
+import type { UsuarioAutenticado } from '../auth/types/usuario-autenticado';
+import { ConvidadosService } from './convidados.service';
+import { CriarConvidadoDto } from './dto/criar-convidado.dto';
 import { EnviarConvitesDto } from './dto/enviar-convites.dto';
 
-@Controller('convidados')
+@Controller()
+@UseGuards(JwtAuthGuard)
 export class ConvidadosController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(private readonly convidadosService: ConvidadosService) {}
 
-  @Post('enviar-convites')
-  @UseGuards(JwtAuthGuard)
-  async enviarConvites(@Body() dto: EnviarConvitesDto) {
-    const resultados = await Promise.allSettled(
-      dto.destinatarios.map((destinatario) =>
-        this.emailService.enviarConvite(
-          destinatario.email,
-          destinatario.nome,
-          dto.assunto,
-          dto.mensagem,
-          dto.linkRsvp,
-        ),
-      ),
-    );
+  @Get('eventos/:eventoId/convidados')
+  listar(
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Param('eventoId', ParseUUIDPipe) eventoId: string,
+  ) {
+    return this.convidadosService.listar(usuario.id, eventoId);
+  }
 
-    const enviados = resultados.filter((r) => r.status === 'fulfilled').length;
-    const falhas = resultados.length - enviados;
+  @Post('eventos/:eventoId/convidados')
+  criar(
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Param('eventoId', ParseUUIDPipe) eventoId: string,
+    @Body() dto: CriarConvidadoDto,
+  ) {
+    return this.convidadosService.criar(usuario.id, eventoId, dto);
+  }
 
-    return { enviados, falhas, total: dto.destinatarios.length };
+  @Post('eventos/:eventoId/convidados/enviar-convites')
+  enviarConvites(
+    @CurrentUser() usuario: UsuarioAutenticado,
+    @Param('eventoId', ParseUUIDPipe) eventoId: string,
+    @Body() dto: EnviarConvitesDto,
+  ) {
+    return this.convidadosService.enviarConvites(usuario.id, eventoId, dto);
   }
 }
