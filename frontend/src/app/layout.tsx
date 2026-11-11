@@ -23,6 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      data-scroll-behavior="smooth"
       className={`${lora.variable} ${inter.variable} h-full antialiased`}
     >
       <body 

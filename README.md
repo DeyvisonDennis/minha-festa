@@ -23,12 +23,14 @@ Em desenvolvimento: fornecedores, financeiro, presentes, convites digitais e pub
 ## Pré-requisitos
 
 - [Node.js](https://nodejs.org/) 20.9 ou superior
-- [PostgreSQL](https://www.postgresql.org/download/) 17 (ou compatível), rodando localmente, com o `psql` disponível no terminal
+- [PostgreSQL](https://www.postgresql.org/download/) 17 (ou compatível), rodando localmente, com acesso ao psql (veja a observação em "Banco de dados").
 - Opcionais: credenciais do Google (login social) e uma conta Gmail com [senha de app](https://support.google.com/accounts/answer/185833) (envio de e-mails). Sem elas, essas duas funções ficam indisponíveis e o restante funciona normalmente.
 
 ## Banco de dados
 
 Crie o banco e restaure a estrutura. Use o `psql`, e não o Query Tool do pgAdmin, porque o arquivo contém comandos próprios do `psql`:
+
+> **Windows:** o instalador do PostgreSQL normalmente não adiciona o `psql` ao PATH. Se o comando não for reconhecido, use o caminho completo (por exemplo `& "C:\Program Files\PostgreSQL\17\bin\psql.exe"`), abra o "SQL Shell (psql)" pelo menu Iniciar ou use a ferramenta **PSQL Tool** do pgAdmin (menu Tools).
 
 ```bash
 psql -U postgres -c 'CREATE DATABASE "Minha_Festa";'
@@ -84,7 +86,7 @@ O frontend sobe em `http://localhost:3000`.
 
 | Rota | Tela |
 |---|---|
-| `/` | Redireciona para o login ou o dashboard |
+| `/` | Landing page (pública), com acesso ao login e ao cadastro |
 | `/login` | Entrar |
 | `/cadastro` | Criar conta |
 | `/esqueci-senha` | Pedir a redefinição de senha |
@@ -94,6 +96,8 @@ O frontend sobe em `http://localhost:3000`.
 | `/cronograma` | Tarefas em Lista, Kanban e Calendário |
 | `/convidados` | Lista de convidados e envio de convites |
 | `/rsvp/<código>` | Página pública onde o convidado responde ao convite |
+| `/termos` | Termos de uso (público) |
+| `/privacidade` | Política de privacidade (pública) |
 
 ## Estrutura
 

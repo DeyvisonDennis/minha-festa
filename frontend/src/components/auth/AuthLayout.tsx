@@ -12,7 +12,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         src="/images/banner-auth.png"
         alt=""
         fill
-        priority
+        preload
         className="object-cover"
       />
       <div className="absolute inset-0 bg-black/10" />
