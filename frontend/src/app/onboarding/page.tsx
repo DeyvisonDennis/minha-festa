@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AppShellSemSidebar } from "@/components/app/AppShellSemSidebar";
 import { useEventoAtivo } from "@/context/EventoContext";
 import { urlCapaSugerida } from "@/lib/opcoes-capa";
@@ -23,21 +24,21 @@ const PASSOS: { id: Passo; label: string }[] = [
 
 function OnboardingContent() {
   const router = useRouter();
-  const { evento, carregado, erro: erroCarregamento, recarregar, criarEvento } =
-    useEventoAtivo();
-
+  const { evento, carregado, erro: erroCarregamento, recarregar, criarEvento } = useEventoAtivo();
+  // ?novo=1: quem já tem evento e quer criar mais um (seletor da Sidebar).
+  const novoEvento = useSearchParams().get("novo") === "1";
   const [passo, setPasso] = useState<Passo>(1);
   const [tipo, setTipo] = useState<TipoEvento | null>(null);
   const [detalhes, setDetalhes] = useState<DetalhesEvento | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  // Quem já tem um evento não precisa do assistente.
+  // Quem já tem um evento não precisa do assistente, a não ser que esteja criando outro.
   useEffect(() => {
-    if (carregado && evento) {
+    if (carregado && evento && !novoEvento) {
       router.replace("/dashboard");
     }
-  }, [carregado, evento, router]);
+  }, [carregado, evento, novoEvento, router]);
 
   function handleTipoEscolhido(tipoEscolhido: TipoEvento) {
     setTipo(tipoEscolhido);
@@ -77,7 +78,7 @@ function OnboardingContent() {
     return <TelaErroConexao onTentarNovamente={recarregar} />;
   }
 
-  if (!carregado || evento) {
+  if (!carregado || (evento && !novoEvento)) {
     return <TelaCarregando />;
   }
 
@@ -121,7 +122,14 @@ function OnboardingContent() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
-        {passo === 1 && <PassoTipoEvento onContinuar={handleTipoEscolhido} />}
+        {novoEvento && evento && passo === 1 && (
+          <Link href="/dashboard" className="mb-6 inline-block text-sm text-muted hover:text-foreground">
+            ← Voltar ao painel
+          </Link>
+        )}
+        {passo === 1 && (
+          <PassoTipoEvento onContinuar={handleTipoEscolhido} novoEvento={novoEvento && !!evento} />
+        )}
         {passo === 2 && tipo && (
           <PassoDetalhes
             tipo={tipo}
@@ -147,7 +155,9 @@ function OnboardingContent() {
 export default function OnboardingPage() {
   return (
     <AppShellSemSidebar>
-      <OnboardingContent />
+      <Suspense fallback={<TelaCarregando />}>
+        <OnboardingContent />
+      </Suspense>
     </AppShellSemSidebar>
   );
 }

@@ -775,7 +775,8 @@ CREATE TABLE public.tokens_confirmacao_email (
     token_hash character varying(255) NOT NULL,
     expira_em timestamp with time zone NOT NULL,
     utilizado_em timestamp with time zone,
-    criado_em timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    criado_em timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    novo_email public.citext
 );
 
 
@@ -816,6 +817,7 @@ CREATE TABLE public.usuarios (
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     excluido_em timestamp with time zone,
     google_id character varying(255),
+    evento_ativo_id uuid,
     CONSTRAINT chk_usuario_cpf CHECK (((cpf IS NULL) OR ((cpf)::text ~ '^[0-9]{11}$'::text))),
     CONSTRAINT chk_usuario_nome CHECK ((length(TRIM(BOTH FROM nome)) >= 3))
 );

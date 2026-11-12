@@ -8,9 +8,10 @@ import { ConvidadosModule } from './convidados/convidados.module';
 import { EventosModule } from './eventos/eventos.module';
 import { TarefasModule } from './tarefas/tarefas.module';
 import { RsvpModule } from './rsvp/rsvp.module';
+import { ContaModule } from './conta/conta.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, EmailModule, ConvidadosModule, EventosModule, TarefasModule, RsvpModule],
+  imports: [PrismaModule, AuthModule, EmailModule, ConvidadosModule, EventosModule, TarefasModule, RsvpModule, ContaModule],
   controllers: [AppController],
   providers: [AppService],
 })

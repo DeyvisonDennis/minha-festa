@@ -6,19 +6,23 @@ import { TIPO_EVENTO_CONFIG, ORDEM_TIPOS, type TipoEvento } from "@/lib/tipos-ev
 
 type PassoTipoEventoProps = {
   onContinuar: (tipo: TipoEvento) => void;
+  // true quando a pessoa já tem eventos e está criando mais um.
+  novoEvento?: boolean;
 };
 
-export function PassoTipoEvento({ onContinuar }: PassoTipoEventoProps) {
+export function PassoTipoEvento({ onContinuar, novoEvento = false }: PassoTipoEventoProps) {
   const [selecionado, setSelecionado] = useState<TipoEvento | null>(null);
 
   return (
     <div className="text-center">
-      <span className="text-5xl">👋</span>
+      <span className="text-5xl">{novoEvento ? "🎉" : "👋"}</span>
       <h1 className="mt-4 font-serif text-3xl font-bold text-foreground">
-        Bem-vinda ao Minha Festa!
+        {novoEvento ? "Novo evento" : "Bem-vinda ao Minha Festa!"}
       </h1>
       <p className="mt-2 text-muted">
-        Vamos criar seu primeiro evento. Qual é o tipo de festa?
+        {novoEvento
+          ? "Qual é o tipo do seu novo evento?"
+          : "Vamos criar seu primeiro evento. Qual é o tipo de festa?"}
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">

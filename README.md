@@ -6,10 +6,12 @@ Plataforma web para organizar eventos como casamentos, aniversários e formatura
 
 - Cadastro, login (e-mail e senha, ou Google), recuperação de senha por e-mail e renovação automática da sessão
 - Assistente de primeiro acesso para criar o evento
+- Vários eventos por conta, com troca do evento ativo pela Sidebar (a escolha fica salva)
 - Dashboard do evento, com imagem de capa escolhida entre fotos prontas
 - Cronograma de tarefas em Lista, Kanban (arrastar e soltar) e Calendário
 - Convidados: cadastro, busca, filtros e envio de convites por e-mail
 - Link individual de RSVP por convidado e página pública (`/rsvp/<código>`) onde ele confirma ou recusa a presença
+- Configurações: dados do perfil, troca de senha, troca de e-mail com confirmação por link e edição do evento
 
 Em desenvolvimento: fornecedores, financeiro, presentes, convites digitais e publicação (deploy).
 
@@ -23,12 +25,14 @@ Em desenvolvimento: fornecedores, financeiro, presentes, convites digitais e pub
 ## Pré-requisitos
 
 - [Node.js](https://nodejs.org/) 20.9 ou superior
-- [PostgreSQL](https://www.postgresql.org/download/) 17 (ou compatível), rodando localmente, com o `psql` disponível no terminal
+- [PostgreSQL](https://www.postgresql.org/download/) 17 (ou compatível), rodando localmente, com acesso ao psql (veja a observação em "Banco de dados").
 - Opcionais: credenciais do Google (login social) e uma conta Gmail com [senha de app](https://support.google.com/accounts/answer/185833) (envio de e-mails). Sem elas, essas duas funções ficam indisponíveis e o restante funciona normalmente.
 
 ## Banco de dados
 
 Crie o banco e restaure a estrutura. Use o `psql`, e não o Query Tool do pgAdmin, porque o arquivo contém comandos próprios do `psql`:
+
+> **Windows:** o instalador do PostgreSQL normalmente não adiciona o `psql` ao PATH. Se o comando não for reconhecido, use o caminho completo (por exemplo `& "C:\Program Files\PostgreSQL\17\bin\psql.exe"`), abra o "SQL Shell (psql)" pelo menu Iniciar ou use a ferramenta **PSQL Tool** do pgAdmin (menu Tools).
 
 ```bash
 psql -U postgres -c 'CREATE DATABASE "Minha_Festa";'
@@ -42,6 +46,8 @@ O nome `Minha_Festa` tem letras maiúsculas e por isso vai entre aspas na criaç
 ```bash
 psql -U postgres -d Minha_Festa -f database/migrations/001-login-google.sql
 psql -U postgres -d Minha_Festa -f database/migrations/002-eventos-tarefas.sql
+psql -U postgres -d Minha_Festa -f database/migrations/003-troca-email.sql
+psql -U postgres -d Minha_Festa -f database/migrations/004-evento-ativo.sql
 ```
 
 ## Backend
@@ -84,22 +90,26 @@ O frontend sobe em `http://localhost:3000`.
 
 | Rota | Tela |
 |---|---|
-| `/` | Redireciona para o login ou o dashboard |
+| `/` | Landing page (pública), com acesso ao login e ao cadastro |
 | `/login` | Entrar |
 | `/cadastro` | Criar conta |
 | `/esqueci-senha` | Pedir a redefinição de senha |
 | `/redefinir-senha` | Definir uma nova senha (link do e-mail) |
-| `/onboarding` | Assistente para criar o primeiro evento |
+| `/onboarding` | Assistente para criar o primeiro evento (`?novo=1` cria mais um) |
 | `/dashboard` | Visão geral do evento |
 | `/cronograma` | Tarefas em Lista, Kanban e Calendário |
 | `/convidados` | Lista de convidados e envio de convites |
+| `/configuracoes` | Perfil (dados, senha e e-mail) e dados do evento |
+| `/confirmar-email` | Confirma a troca de e-mail (link do e-mail) |
 | `/rsvp/<código>` | Página pública onde o convidado responde ao convite |
+| `/termos` | Termos de uso (público) |
+| `/privacidade` | Política de privacidade (pública) |
 
 ## Estrutura
 
 ```
 minha-festa/
-├── backend/    # API NestJS (auth, eventos, tarefas, convidados, rsvp, email)
+├── backend/    # API NestJS (auth, conta, eventos, tarefas, convidados, rsvp, email)
 ├── frontend/   # Aplicação Next.js
 └── database/   # schema.sql (banco novo) e migrations/ (banco já existente)
 ```
