@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { SeletorEvento } from "./SeletorEvento";
+import { Marca } from "@/components/ui/Marca";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -29,14 +30,7 @@ export function Sidebar() {
     const conteudoSidebar = (
     <>
       <div className="flex items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3d2b1f] text-white">
-            ★
-          </span>
-          <span className="font-serif text-lg font-bold text-foreground">
-            Minha Festa
-          </span>
-        </div>
+        <Marca href="/dashboard" />
         <button
           onClick={() => setMenuAberto(false)}
           aria-label="Fechar menu"
@@ -107,14 +101,7 @@ export function Sidebar() {
   return (
     <>
       <div className="flex items-center justify-between border-b border-border bg-white px-4 py-3 lg:hidden">
-        <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#3d2b1f] text-white text-sm">
-            ★
-          </span>
-          <span className="font-serif text-base font-bold text-foreground">
-            Minha Festa
-          </span>
-        </div>
+        <Marca tamanho="sm" href="/dashboard" />
         <button
           onClick={() => setMenuAberto(true)}
           aria-label="Abrir menu"
@@ -140,4 +127,4 @@ export function Sidebar() {
       </aside>
     </>
   );
-}
+}
