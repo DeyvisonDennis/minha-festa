@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, CalendarClock, Users } from "lucide-react";
+import { LayoutGrid, CalendarClock, Users, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useEventoAtivo } from "@/context/EventoContext";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { calcularDiasRestantes, formatarDataResumida } from "@/lib/datas";
+import { SeletorEvento } from "./SeletorEvento";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -18,7 +17,6 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const { usuario, logout } = useAuth();
-  const { evento } = useEventoAtivo();
   const [menuAberto, setMenuAberto] = useState(false);
 
   const iniciais = usuario?.nome
@@ -48,17 +46,7 @@ export function Sidebar() {
         </button>
       </div>
 
-      {evento && (
-        <div className="mx-4 rounded-xl border border-border bg-[#FAF7F2] px-4 py-3">
-          <p className="text-xs text-muted">Evento ativo</p>
-          <p className="mt-0.5 truncate text-sm font-semibold text-foreground">
-            {evento.nome}
-          </p>
-          <p className="mt-0.5 text-xs text-muted">
-            {formatarDataResumida(evento.dataISO)} · {calcularDiasRestantes(evento.dataISO)} dias
-          </p>
-        </div>
-      )}
+      <SeletorEvento onNavegar={() => setMenuAberto(false)} />
 
       <nav className="mt-6 flex-1 space-y-1 px-4">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -82,7 +70,14 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-border px-4 py-4">
-        <div className="flex items-center gap-3">
+        <Link
+          href="/configuracoes"
+          onClick={() => setMenuAberto(false)}
+          title="Configurações da conta e do evento"
+          className={`group -mx-2 flex items-center gap-3 rounded-lg px-2 py-2 transition ${
+            pathname === "/configuracoes" ? "bg-black/5" : "hover:bg-black/5"
+          }`}
+        >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
             {iniciais}
           </span>
@@ -92,7 +87,13 @@ export function Sidebar() {
             </p>
             <p className="text-xs text-muted">Plano Gratuito</p>
           </div>
-        </div>
+          <Settings
+            size={16}
+            className={`shrink-0 transition ${
+              pathname === "/configuracoes" ? "text-foreground" : "text-muted group-hover:text-foreground"
+            }`}
+          />
+        </Link>
         <button
           onClick={logout}
           className="mt-3 w-full cursor-pointer rounded-lg border border-border py-1.5 text-xs font-medium text-foreground hover:bg-black/5"

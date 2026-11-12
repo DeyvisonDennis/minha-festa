@@ -75,5 +75,55 @@ export class EmailService {
       `,
     });
   }
+  // Vai para o e-mail NOVO: só depois do clique o e-mail da conta muda.
+  async enviarConfirmacaoTrocaEmail(destinatario: string, nome: string, link: string) {
+    await this.transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: destinatario,
+      subject: 'Confirme seu novo e-mail - Minha Festa',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
+          <h2>Olá, ${escaparHtml(nome)}!</h2>
+          <p>Recebemos um pedido para usar este endereço como o novo e-mail da sua conta na Minha Festa.</p>
+          <p>Clique no botão abaixo para confirmar. Este link é válido por 1 hora.</p>
+          <p style="text-align: center; margin: 32px 0;">
+            <a href="${link}" style="background-color: #8b6f47; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+              Confirmar novo e-mail
+            </a>
+          </p>
+          <p>Se você não fez esse pedido, ignore este e-mail. Nada será alterado.</p>
+        </div>
+      `,
+    });
+  }
+
+  // Vai para o e-mail ANTIGO: avisa do pedido e, depois, da troca concluída.
+  async enviarAvisoTrocaEmail(
+    destinatario: string,
+    nome: string,
+    novoEmailMascarado: string,
+    etapa: 'solicitada' | 'concluida',
+  ) {
+    const texto =
+      etapa === 'solicitada'
+        ? `Recebemos um pedido para trocar o e-mail da sua conta na Minha Festa para <strong>${escaparHtml(novoEmailMascarado)}</strong>. A troca só acontece se o novo endereço for confirmado.`
+        : `O e-mail da sua conta na Minha Festa foi alterado para <strong>${escaparHtml(novoEmailMascarado)}</strong>. Por segurança, todas as sessões foram encerradas.`;
+
+    await this.transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: destinatario,
+      subject:
+        etapa === 'solicitada'
+          ? 'Pedido de troca de e-mail - Minha Festa'
+          : 'Seu e-mail foi alterado - Minha Festa',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
+          <h2>Olá, ${escaparHtml(nome)}!</h2>
+          <p>${texto}</p>
+          <p>Se não foi você, entre na sua conta e altere sua senha imediatamente.</p>
+        </div>
+      `,
+    });
+  }
 }
 

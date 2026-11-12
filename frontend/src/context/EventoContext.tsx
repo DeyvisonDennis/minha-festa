@@ -35,6 +35,9 @@ export type NovoEvento = {
   imagemCapaUrl: string;
 };
 
+// Dados editáveis na tela de Configurações (a capa tem rota própria).
+export type DadosEvento = Omit<NovoEvento, "imagemCapaUrl">;
+
 // O estado guarda de qual usuário é o evento. Assim, ao trocar de conta no
 // mesmo navegador, os dados da conta anterior nunca aparecem para a nova.
 type EstadoEvento = {
@@ -50,6 +53,9 @@ type EventoContextType = {
   recarregar: () => Promise<void>;
   criarEvento: (dados: NovoEvento) => Promise<void>;
   alterarCapa: (imagemCapaUrl: string) => Promise<void>;
+  atualizarEvento: (dados: DadosEvento) => Promise<EventoAtivo>;
+  listarEventos: () => Promise<EventoAtivo[]>;
+  selecionarEvento: (eventoId: string) => Promise<void>;
 };
 
 const EventoContext = createContext<EventoContextType | undefined>(undefined);
@@ -119,9 +125,62 @@ export function EventoProvider({ children }: { children: React.ReactNode }) {
     [usuarioId, eventoId],
   );
 
+  const atualizarEvento = useCallback(
+    async (dados: DadosEvento) => {
+      if (!usuarioId || !eventoId) throw new Error("Nenhum evento ativo.");
+      const data = await apiFetch<{ evento: EventoAtivo }>(`/eventos/${eventoId}`, {
+        method: "PUT",
+        body: JSON.stringify(dados),
+      });
+      setEstado({ usuarioId, evento: data.evento, erro: false });
+      return data.evento;
+    },
+    [usuarioId, eventoId],
+  );
+
+  // Lista os eventos da conta para o seletor da Sidebar.
+  const listarEventos = useCallback(async () => {
+    const data = await apiFetch<{ eventos: EventoAtivo[] }>("/eventos");
+    return data.eventos;
+  }, []);
+
+  // Troca o evento ativo. Cronograma, Convidados e Dashboard leem o evento
+  // deste contexto, então todos passam a mostrar o evento escolhido.
+  const selecionarEvento = useCallback(
+    async (novoEventoId: string) => {
+      if (!usuarioId) return;
+      const data = await apiFetch<{ evento: EventoAtivo }>("/eventos/ativo", {
+        method: "PUT",
+        body: JSON.stringify({ eventoId: novoEventoId }),
+      });
+      setEstado({ usuarioId, evento: data.evento, erro: false });
+    },
+    [usuarioId],
+  );
+
   const valor = useMemo(
-    () => ({ evento, carregado, erro, recarregar, criarEvento, alterarCapa }),
-    [evento, carregado, erro, recarregar, criarEvento, alterarCapa],
+    () => ({
+      evento,
+      carregado,
+      erro,
+      recarregar,
+      criarEvento,
+      alterarCapa,
+      atualizarEvento,
+      listarEventos,
+      selecionarEvento,
+    }),
+    [
+      evento,
+      carregado,
+      erro,
+      recarregar,
+      criarEvento,
+      alterarCapa,
+      atualizarEvento,
+      listarEventos,
+      selecionarEvento,
+    ],
   );
 
   return <EventoContext.Provider value={valor}>{children}</EventoContext.Provider>;

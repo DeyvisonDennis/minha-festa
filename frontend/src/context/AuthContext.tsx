@@ -42,6 +42,7 @@ type AuthContextType = {
   carregando: boolean;
   erroConexao: boolean;
   recarregar: () => Promise<void>;
+  atualizarUsuario: (dados: Partial<Pick<Usuario, "nome">>) => void;
   logout: () => Promise<void>;
 };
 
@@ -83,6 +84,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCarregando(false);
   }, []);
 
+  // Atualiza os dados em memória depois de salvar o perfil, sem recarregar a sessão
+  // (recarregar mostraria a tela de "Carregando..." no meio da página).
+  const atualizarUsuario = useCallback((dados: Partial<Pick<Usuario, "nome">>) => {
+    setUsuario((atual) => (atual ? { ...atual, ...dados } : atual));
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await apiFetch("/auth/logout", { method: "POST" });
@@ -94,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ usuario, carregando, erroConexao, recarregar, logout }}
+      value={{ usuario, carregando, erroConexao, recarregar, atualizarUsuario, logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -6,10 +6,12 @@ Plataforma web para organizar eventos como casamentos, aniversários e formatura
 
 - Cadastro, login (e-mail e senha, ou Google), recuperação de senha por e-mail e renovação automática da sessão
 - Assistente de primeiro acesso para criar o evento
+- Vários eventos por conta, com troca do evento ativo pela Sidebar (a escolha fica salva)
 - Dashboard do evento, com imagem de capa escolhida entre fotos prontas
 - Cronograma de tarefas em Lista, Kanban (arrastar e soltar) e Calendário
 - Convidados: cadastro, busca, filtros e envio de convites por e-mail
 - Link individual de RSVP por convidado e página pública (`/rsvp/<código>`) onde ele confirma ou recusa a presença
+- Configurações: dados do perfil, troca de senha, troca de e-mail com confirmação por link e edição do evento
 
 Em desenvolvimento: fornecedores, financeiro, presentes, convites digitais e publicação (deploy).
 
@@ -44,6 +46,8 @@ O nome `Minha_Festa` tem letras maiúsculas e por isso vai entre aspas na criaç
 ```bash
 psql -U postgres -d Minha_Festa -f database/migrations/001-login-google.sql
 psql -U postgres -d Minha_Festa -f database/migrations/002-eventos-tarefas.sql
+psql -U postgres -d Minha_Festa -f database/migrations/003-troca-email.sql
+psql -U postgres -d Minha_Festa -f database/migrations/004-evento-ativo.sql
 ```
 
 ## Backend
@@ -91,10 +95,12 @@ O frontend sobe em `http://localhost:3000`.
 | `/cadastro` | Criar conta |
 | `/esqueci-senha` | Pedir a redefinição de senha |
 | `/redefinir-senha` | Definir uma nova senha (link do e-mail) |
-| `/onboarding` | Assistente para criar o primeiro evento |
+| `/onboarding` | Assistente para criar o primeiro evento (`?novo=1` cria mais um) |
 | `/dashboard` | Visão geral do evento |
 | `/cronograma` | Tarefas em Lista, Kanban e Calendário |
 | `/convidados` | Lista de convidados e envio de convites |
+| `/configuracoes` | Perfil (dados, senha e e-mail) e dados do evento |
+| `/confirmar-email` | Confirma a troca de e-mail (link do e-mail) |
 | `/rsvp/<código>` | Página pública onde o convidado responde ao convite |
 | `/termos` | Termos de uso (público) |
 | `/privacidade` | Política de privacidade (pública) |
@@ -103,7 +109,7 @@ O frontend sobe em `http://localhost:3000`.
 
 ```
 minha-festa/
-├── backend/    # API NestJS (auth, eventos, tarefas, convidados, rsvp, email)
+├── backend/    # API NestJS (auth, conta, eventos, tarefas, convidados, rsvp, email)
 ├── frontend/   # Aplicação Next.js
 └── database/   # schema.sql (banco novo) e migrations/ (banco já existente)
 ```
