@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { CalendarDays, Check, MapPin, X } from "lucide-react";
 import { AlertaErro } from "@/components/ui/AlertaErro";
 import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { Marca } from "@/components/ui/Marca";
 import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
 import { ApiError, apiFetch } from "@/lib/api";
 import { formatarDataExtensa } from "@/lib/datas";
@@ -204,8 +205,8 @@ export default function RsvpPage() {
           )}
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted">Minha Festa</p>
+        <Marca tamanho="sm" className="mt-6 justify-center opacity-80" />
       </main>
     </div>
   );
-}
+}

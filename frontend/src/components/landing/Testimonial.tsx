@@ -22,7 +22,7 @@ export function Testimonial() {
           </p>
           <p className="testi-body">
             A Minha Festa tornou tudo mais simples! Com as funcionalidades organizadas em um só
-            lugar, foi fácil acompanhar o orçamento, gerenciar convidados, encontrar fornecedores
+            lugar, foi fácil acompanhar  {/*o orçamento, gerenciar convidados, encontrar fornecedores */}
             e controlar cada etapa do evento. Uma experiência intuitiva e prática, que trouxe mais
             tranquilidade, organização e tempo para aproveitar cada momento especial.
           </p>

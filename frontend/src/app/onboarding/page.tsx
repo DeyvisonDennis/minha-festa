@@ -12,6 +12,7 @@ import { PassoDetalhes, type DetalhesEvento } from "@/components/onboarding/Pass
 import { PassoConfirmar } from "@/components/onboarding/PassoConfirmar";
 import { TelaErroConexao } from "@/components/ui/TelaErroConexao";
 import { TelaCarregando } from "@/components/ui/TelaCarregando";
+import { Marca } from "@/components/ui/Marca";
 import { mensagemDeErro } from "@/lib/erros";
 
 type Passo = 1 | 2 | 3;
@@ -86,14 +87,7 @@ function OnboardingContent() {
     <div className="min-h-screen bg-[#FAF7F2]">
       <header className="border-b border-border bg-white px-6 py-4">
         <div className="mx-auto flex max-w-3xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3d2b1f] text-white">
-              ★
-            </span>
-            <span className="font-serif text-lg font-bold text-foreground">
-              Minha Festa
-            </span>
-          </div>
+          <Marca />
 
           <div className="flex items-center gap-2">
             {PASSOS.map((p, i) => (
@@ -160,4 +154,4 @@ export default function OnboardingPage() {
       </Suspense>
     </AppShellSemSidebar>
   );
-}
+}

@@ -1,10 +1,10 @@
 import {
-  Gift,
-  Globe,
+  // Gift,
+  // Globe,
   ListChecks,
-  Store,
+  // Store,
   Users,
-  Wallet,
+  // Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -19,29 +19,31 @@ export type Beneficio = {
 // Principais funcionalidades exibidas na landing page.
 // featured: cartão em destaque | points: lista de itens (opcional)
 export const BENEFICIOS: Beneficio[] = [
-  {
+ /* {
     icon: Wallet,
     featured: true,
     title: "Orçamentos",
     text: "Defina o limite, compare propostas e saiba exatamente quanto já gastou, quanto ainda sobra e onde dá para economizar, antes que o orçamento vire dor de cabeça.",
-  },
-  {
+  },*/
+  /*{
     icon: Store,
     featured: true,
     title: "Fornecedores",
     text: "Buffet, fotografia, decoração, DJ, espaço… encontre profissionais, veja o trabalho deles e peça orçamento sem sair da plataforma.",
-  },
+  },*/
   {
     icon: Users,
+    featured: true,
     title: "Convidados",
-    text: "Envie o convite e receba a confirmação por link ou QR Code. Chega de mensagens perguntando “e aí, você vem?”.",
+    text: "Envie o convite e receba a confirmação por link ou e-mail. Chega de mensagens perguntando “e aí, você vem?”.",
   },
   {
     icon: ListChecks,
+    featured: true,
     title: "Tarefas",
     text: "Tarefas, responsáveis e prazos em um só lugar. Você sempre sabe o que fazer hoje e o que já está resolvido.",
   },
-  {
+  /*{
     icon: Gift,
     title: "Lista de Presentes",
     text: "Monte sua lista com links de lojas ou receba contribuições por PIX. Presentear fica fácil para quem você ama.",
@@ -50,7 +52,7 @@ export const BENEFICIOS: Beneficio[] = [
     icon: Globe,
     title: "Convites",
     text: "Crie convites, Save The Date e um site do evento com contagem regressiva. Surpreenda antes mesmo da festa começar.",
-  },
+  },*/
 ];
 
 // Prévia ilustrativa do painel (DADOS DEMONSTRATIVOS, não vêm do banco).
