@@ -10,8 +10,9 @@ export function Benefits() {
       </p>
       <h2>Seu evento inteiro, em um só lugar.</h2>
       <p className="sub">
-        Esqueça planilhas, papéis soltos e grupos de WhatsApp. Orçamento, fornecedores, convidados
-        e presentes conectados para você gastar menos energia organizando e mais tempo celebrando.
+        Esqueça planilhas, papéis soltos e grupos de WhatsApp. Todo o seu planejamento conectado para
+        você gastar menos energia organizando e mais tempo celebrando.{/* Orçamento, fornecedores, convidados
+        e presentes conectados para você gastar menos energia organizando e mais tempo celebrando. */}
       </p>
 
       <div className="cards">
